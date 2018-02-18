@@ -1,0 +1,41 @@
+{
+  "name": "bonded-token",
+  "version": "0.0.1",
+  "description": "Put a description here",
+  "main": "build/index.js",
+  "peerDependencies": {
+    "react": "^15.5.4"
+  },
+  "dependencies": {
+    "bignumber.js": "^6.0.0",
+    "decimal.js": "^9.0.1",
+    "microevent": "^1.0.0",
+    "react": "^15.5.4",
+    "react-dom": "^16.2.0",
+    "react-flexible-switch": "^1.2.1",
+    "recharts": "^1.0.0-beta.10",
+    "web3": "^1.0.0-beta.30",
+    "web3-provider-engine": "^13.6.5",
+    "web3-utils": "^1.0.0-beta.30",
+    "webpack": "^2.6.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack --watch",
+    "build": "webpack"
+  },
+  "author": {
+    "name": "Your name",
+    "email": "your email"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.24.1",
+    "babel-loader": "^7.0.0",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-env": "^1.5.1",
+    "css-loader": "^0.28.9",
+    "style-loader": "^0.20.2"
+  }
+}

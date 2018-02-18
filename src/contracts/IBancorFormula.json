@@ -1,0 +1,463 @@
+{
+  "contractName": "IBancorFormula",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_supply",
+          "type": "uint256"
+        },
+        {
+          "name": "_connectorBalance",
+          "type": "uint256"
+        },
+        {
+          "name": "_connectorWeight",
+          "type": "uint32"
+        },
+        {
+          "name": "_depositAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "calculatePurchaseReturn",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_supply",
+          "type": "uint256"
+        },
+        {
+          "name": "_connectorBalance",
+          "type": "uint256"
+        },
+        {
+          "name": "_connectorWeight",
+          "type": "uint32"
+        },
+        {
+          "name": "_sellAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "calculateSaleReturn",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "pragma solidity ^0.4.11;\n\n/*\n    Bancor Formula interface\n*/\ncontract IBancorFormula {\n    function calculatePurchaseReturn(uint256 _supply, uint256 _connectorBalance, uint32 _connectorWeight, uint256 _depositAmount) public constant returns (uint256);\n    function calculateSaleReturn(uint256 _supply, uint256 _connectorBalance, uint32 _connectorWeight, uint256 _sellAmount) public constant returns (uint256);\n}\n",
+  "sourcePath": "/Users/billy/react/bonding-token-ui/src/relevant-contracts/contracts/interfaces/IBancorFormula.sol",
+  "ast": {
+    "attributes": {
+      "absolutePath": "/Users/billy/react/bonding-token-ui/src/relevant-contracts/contracts/interfaces/IBancorFormula.sol",
+      "exportedSymbols": {
+        "IBancorFormula": [
+          2597
+        ]
+      }
+    },
+    "children": [
+      {
+        "attributes": {
+          "literals": [
+            "solidity",
+            "^",
+            "0.4",
+            ".11"
+          ]
+        },
+        "id": 2570,
+        "name": "PragmaDirective",
+        "src": "0:24:8"
+      },
+      {
+        "attributes": {
+          "baseContracts": [
+            null
+          ],
+          "contractDependencies": [
+            null
+          ],
+          "contractKind": "contract",
+          "documentation": null,
+          "fullyImplemented": false,
+          "linearizedBaseContracts": [
+            2597
+          ],
+          "name": "IBancorFormula",
+          "scope": 2598
+        },
+        "children": [
+          {
+            "attributes": {
+              "body": null,
+              "constant": true,
+              "implemented": false,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "calculatePurchaseReturn",
+              "payable": false,
+              "scope": 2597,
+              "stateMutability": "view",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "_supply",
+                      "scope": 2583,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint256",
+                          "type": "uint256"
+                        },
+                        "id": 2571,
+                        "name": "ElementaryTypeName",
+                        "src": "124:7:8"
+                      }
+                    ],
+                    "id": 2572,
+                    "name": "VariableDeclaration",
+                    "src": "124:15:8"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "_connectorBalance",
+                      "scope": 2583,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint256",
+                          "type": "uint256"
+                        },
+                        "id": 2573,
+                        "name": "ElementaryTypeName",
+                        "src": "141:7:8"
+                      }
+                    ],
+                    "id": 2574,
+                    "name": "VariableDeclaration",
+                    "src": "141:25:8"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "_connectorWeight",
+                      "scope": 2583,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint32",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint32",
+                          "type": "uint32"
+                        },
+                        "id": 2575,
+                        "name": "ElementaryTypeName",
+                        "src": "168:6:8"
+                      }
+                    ],
+                    "id": 2576,
+                    "name": "VariableDeclaration",
+                    "src": "168:23:8"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "_depositAmount",
+                      "scope": 2583,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint256",
+                          "type": "uint256"
+                        },
+                        "id": 2577,
+                        "name": "ElementaryTypeName",
+                        "src": "193:7:8"
+                      }
+                    ],
+                    "id": 2578,
+                    "name": "VariableDeclaration",
+                    "src": "193:22:8"
+                  }
+                ],
+                "id": 2579,
+                "name": "ParameterList",
+                "src": "123:93:8"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "",
+                      "scope": 2583,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint256",
+                          "type": "uint256"
+                        },
+                        "id": 2580,
+                        "name": "ElementaryTypeName",
+                        "src": "242:7:8"
+                      }
+                    ],
+                    "id": 2581,
+                    "name": "VariableDeclaration",
+                    "src": "242:7:8"
+                  }
+                ],
+                "id": 2582,
+                "name": "ParameterList",
+                "src": "241:9:8"
+              }
+            ],
+            "id": 2583,
+            "name": "FunctionDefinition",
+            "src": "91:160:8"
+          },
+          {
+            "attributes": {
+              "body": null,
+              "constant": true,
+              "implemented": false,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "calculateSaleReturn",
+              "payable": false,
+              "scope": 2597,
+              "stateMutability": "view",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "_supply",
+                      "scope": 2596,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint256",
+                          "type": "uint256"
+                        },
+                        "id": 2584,
+                        "name": "ElementaryTypeName",
+                        "src": "285:7:8"
+                      }
+                    ],
+                    "id": 2585,
+                    "name": "VariableDeclaration",
+                    "src": "285:15:8"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "_connectorBalance",
+                      "scope": 2596,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint256",
+                          "type": "uint256"
+                        },
+                        "id": 2586,
+                        "name": "ElementaryTypeName",
+                        "src": "302:7:8"
+                      }
+                    ],
+                    "id": 2587,
+                    "name": "VariableDeclaration",
+                    "src": "302:25:8"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "_connectorWeight",
+                      "scope": 2596,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint32",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint32",
+                          "type": "uint32"
+                        },
+                        "id": 2588,
+                        "name": "ElementaryTypeName",
+                        "src": "329:6:8"
+                      }
+                    ],
+                    "id": 2589,
+                    "name": "VariableDeclaration",
+                    "src": "329:23:8"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "_sellAmount",
+                      "scope": 2596,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint256",
+                          "type": "uint256"
+                        },
+                        "id": 2590,
+                        "name": "ElementaryTypeName",
+                        "src": "354:7:8"
+                      }
+                    ],
+                    "id": 2591,
+                    "name": "VariableDeclaration",
+                    "src": "354:19:8"
+                  }
+                ],
+                "id": 2592,
+                "name": "ParameterList",
+                "src": "284:90:8"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "",
+                      "scope": 2596,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint256",
+                          "type": "uint256"
+                        },
+                        "id": 2593,
+                        "name": "ElementaryTypeName",
+                        "src": "400:7:8"
+                      }
+                    ],
+                    "id": 2594,
+                    "name": "VariableDeclaration",
+                    "src": "400:7:8"
+                  }
+                ],
+                "id": 2595,
+                "name": "ParameterList",
+                "src": "399:9:8"
+              }
+            ],
+            "id": 2596,
+            "name": "FunctionDefinition",
+            "src": "256:153:8"
+          }
+        ],
+        "id": 2597,
+        "name": "ContractDefinition",
+        "src": "61:350:8"
+      }
+    ],
+    "id": 2598,
+    "name": "SourceUnit",
+    "src": "0:412:8"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.4.19+commit.c4cbbb05.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "1.0.1",
+  "updatedAt": "2018-02-18T02:56:24.948Z"
+}

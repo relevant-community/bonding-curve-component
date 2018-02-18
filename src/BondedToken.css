@@ -1,0 +1,125 @@
+.--bondedToken {
+  font-family: Arial;
+  font-size:16px;
+  line-height:1.2em;
+  border: 1px solid black;
+}
+.--bondedToken a,
+.--bondedToken a:active,
+.--bondedToken a:visited,
+.--bondedToken a:hover {
+  color: lightgrey;
+  text-decoration: none;
+}
+.--bondedToken .--bondedToken-pointer {
+  cursor: pointer;
+}
+.--bondedToken input:focus,
+.--bondedToken button:focus{
+    outline: none;
+}
+.--bondedToken label {
+  display: block;
+  border-bottom:1px solid grey;
+}
+.--bondedToken label:not(.--bondedToken-ratio) input[type="number"],
+.--bondedToken label:not(.--bondedToken-ratio) > div {
+  width:calc(100% - 60px);
+  max-width: calc(50vw - 2em);
+  display: inline;
+}
+.--bondedToken input[type="range"] {
+  width:100%;
+}
+.--bondedToken input[type="text"],
+.--bondedToken input[type="number"] {
+  display: inline;
+  border: none;
+  text-align:right;
+  font-size: 1rem;
+  width:100%;
+  background-color: transparent;
+}
+.--bondedToken-flex {
+  display: flex;
+  justify-content: space-between;
+}
+.--bondedToken-flex-center {
+  display: flex;
+  justify-content: space-evenly;
+}
+/*.--bondedToken-flex > div {
+  flex-grow: 1
+}*/
+
+
+.--bondedToken-mx-auto {
+  margin-right:auto;
+  margin-left:auto;
+}
+.--bondedToken-eth::after {
+  content: ' Ether';
+  display:inline;
+}
+.--bondedToken-token::after {
+  content: ' Tokens';
+  display:inline;
+}
+
+.--bondedTokenHeader {
+  background-color: grey;
+  border-bottom: 1px solid black;
+  color: lightgray;
+  padding:1em;
+  font-size: 0.9em;
+
+}
+.--bondedTokenAddress {
+  /*font-size: 3.8vw;
+  line-height: 3.8vw; */
+  padding: 0em 0px 1em 0;
+}
+
+
+/* --bondedTokenTransact */
+.--bondedTokenTransact {
+  padding:1em;
+}
+
+
+/* BondedTokenAdvanced */
+.--BondedTokenAdvanced {
+  border-top:1px solid black;
+  padding:1em;
+  background-color: lightgrey;
+}
+.--BondedTokenAdvanced-open {
+}
+.--bondedToken-submit-container {
+  padding:1em;
+}
+.--bondedToken-submit {
+  box-sizing: border-box;
+  width:100%;
+  border:1px solid #4600FF;
+  background-color: #4600FF;
+  color: white;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding:1em;
+  border-radius: 5px;
+  transition: transform 100ms ease;
+  cursor: pointer;
+  display: block;
+  position: relative;
+  transform: translate(0px, 0px);
+}
+
+.--bondedToken-submit:hover:not(:active){
+  transform: translate(-3px, -3px);
+  box-shadow: 3px 3px 1px rgba(0,0,0,0.1);
+}
+
+.--bondedToken-submit:active {
+    transform: translate(0px, 0px) !important;
+}
