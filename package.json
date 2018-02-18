@@ -2,7 +2,7 @@
   "name": "bonded-token",
   "version": "0.0.1",
   "description": "Put a description here",
-  "main": "build/index.js",
+  "main": "src/index.js",
   "peerDependencies": {
     "react": "^15.5.4"
   },
