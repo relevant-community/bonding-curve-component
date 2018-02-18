@@ -2,7 +2,7 @@
   "name": "bonded-token",
   "version": "0.0.1",
   "description": "Put a description here",
-  "main": "src/index.js",
+  "main": "build/index.js",
   "peerDependencies": {
     "react": "^15.5.4"
   },
@@ -10,7 +10,7 @@
     "bignumber.js": "^6.0.0",
     "decimal.js": "^9.0.1",
     "microevent": "^1.0.0",
-    "react": "^15.5.4",
+    "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-flexible-switch": "^1.2.1",
     "recharts": "^1.0.0-beta.10",
