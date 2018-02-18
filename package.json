@@ -25,8 +25,13 @@
     "build": "webpack"
   },
   "author": {
-    "name": "Your name",
-    "email": "your email"
+    "name": "Billy Rennekamp & Slava Balasanov",
+    "email": "hello@relevant.community"
+  },
+  "repository" :
+    {
+      "type" : "git",
+      "url" : "https://github.com/relevant-community/bonding-curve-component"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

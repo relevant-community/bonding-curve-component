@@ -2,7 +2,7 @@
 Built on the occasion of ETHDenver Hackathon by Billy Rennekamp and Slava Balasanov
 
 ## Install
-```npm install relevant-community/bonding-curve-component --save```
+```npm install bonded-token --save```
 
 ## Use
 ```
