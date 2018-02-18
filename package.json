@@ -4,7 +4,7 @@
   "description": "Put a description here",
   "main": "build/index.js",
   "peerDependencies": {
-    "react": "^15.5.4"
+    "react": "^16.2.0"
   },
   "dependencies": {
     "bignumber.js": "^6.0.0",
