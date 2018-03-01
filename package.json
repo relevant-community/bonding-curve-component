@@ -4,20 +4,18 @@
   "description": "Put a description here",
   "main": "build/index.js",
   "peerDependencies": {
-    "react": "^16.2.0"
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0"
   },
   "dependencies": {
     "bignumber.js": "^6.0.0",
-    "decimal.js": "^9.0.1",
     "microevent": "^1.0.0",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
     "react-flexible-switch": "^1.2.1",
     "recharts": "^1.0.0-beta.10",
     "web3": "^1.0.0-beta.30",
     "web3-provider-engine": "^13.6.5",
     "web3-utils": "^1.0.0-beta.30",
-    "webpack": "^2.6.1"
+    "react-dom": "^16.2.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -28,10 +26,9 @@
     "name": "Billy Rennekamp & Slava Balasanov",
     "email": "hello@relevant.community"
   },
-  "repository" :
-    {
-      "type" : "git",
-      "url" : "https://github.com/relevant-community/bonding-curve-component"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/relevant-community/bonding-curve-component"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
@@ -41,6 +38,7 @@
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-preset-env": "^1.5.1",
     "css-loader": "^0.28.9",
-    "style-loader": "^0.20.2"
+    "style-loader": "^0.20.2",
+    "webpack": "^2.6.1"
   }
 }

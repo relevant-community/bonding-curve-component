@@ -26,6 +26,12 @@ module.exports = {
     ]
   },
   externals: {
-    'react': 'commonjs react' // this line is just to use the React dependency of our parent-testing-project instead of using our own React.
+    'react': 'commonjs react', // this line is just to use the React dependency of our parent-testing-project instead of using our own React.
+    'bignumber.js': 'commonjs bignumber.js',
+    'react-flexible-switch': 'commonjs react-flexible-switch',
+    'recharts': 'commonjs recharts',
+    'web3': 'commonjs web3',
+    'web3-utils': 'commonjs web3-utils',
+    'react-dom': 'commonjs react-dom',
   }
 };

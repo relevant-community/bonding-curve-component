@@ -4,11 +4,11 @@ import './BondedToken.css';
 import BondedTokenHeader  from './BondedTokenHeader';
 import BondedTokenTransact  from './BondedTokenTransact.js';
 import BondedTokenAdvanced  from './BondedTokenAdvanced.js';
-// import {Decimal} from 'decimal.js';
 
 var BigNumber = require('bignumber.js');
 const Web3 = require('web3')
 const utils = require('web3-utils')
+// TODO do we need this ?
 // const ZeroClientProvider = require('web3-provider-engine/zero.js')
 
 class BondedToken extends React.Component {
