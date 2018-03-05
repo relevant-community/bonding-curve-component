@@ -1,7 +1,9 @@
 {
-  "presets": ["env"],
+  "presets": ["env", "babel-preset-latest"],
   "plugins": [
     "transform-object-rest-spread",
-    "transform-react-jsx"
+    "transform-react-jsx",
   ]
 }
+
+

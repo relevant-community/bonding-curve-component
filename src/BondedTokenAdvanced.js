@@ -1,19 +1,18 @@
-import Switch  from 'react-flexible-switch';
-import CurveChart from './Chart';
-var React = require('react');
+import React from 'react';
+import Switch from 'react-flexible-switch';
+import PropTypes from 'prop-types';
 
 class BondedTokenAdvanced extends React.Component {
-
   render() {
     return (
       <div className=" --BondedTokenAdvanced">
         <div className=" --bondedToken-flex-center">
           <Switch
-          switchStyles={{width: 110, color: 'grey'}}
+          switchStyles={{ width: 110, color: 'grey' }}
           value={this.props.advanced}
-          circleStyles={{diameter: 16, onColor: 'grey', offColor: 'lightgrey'}} 
-          labels={{on: 'Advanced', off: 'Advanced'}}
-          onChange={event => this.props.toggleAdvanced()} />
+          circleStyles={{ diameter: 16, onColor: 'grey', offColor: 'lightgrey' }}
+          labels={{ on: 'Advanced', off: 'Advanced' }}
+          onChange={this.props.toggleAdvanced} />
         </div>
         {this.props.advanced && (
         <div className=" --BondedTokenAdvanced-open">
@@ -42,13 +41,13 @@ class BondedTokenAdvanced extends React.Component {
                   onChange={event => this.props.onChange(event, 'balance')} />
               </label>
               {!this.props.address && (
-              <input 
+              <input
                 type="range"
                 value={this.props.balance}
                 max={this.props.bigMax}
-                onChange={event => this.props.onChange(event, 'balance')} /> )}
+                onChange={event => this.props.onChange(event, 'balance')} />)}
             </div>
-          </div>        
+          </div>
 
           <div className="--bondedToken-flex --bondedTokenTransact">
             <div>Ratio</div>
@@ -64,12 +63,12 @@ class BondedTokenAdvanced extends React.Component {
                   onChange={event => this.props.onChange(event, 'ratio')} />
               </label>
               {!this.props.address && (
-              <input 
+              <input
                 type="range"
                 value={this.props.ratio}
                 max="1"
                 step="0.01"
-                onChange={event => this.props.onChange(event, 'ratio')} /> )}
+                onChange={event => this.props.onChange(event, 'ratio')} />)}
             </div>
           </div>
 
@@ -85,20 +84,31 @@ class BondedTokenAdvanced extends React.Component {
                     onChange={event => this.props.onChange(event, 'totalSupply')} />
               </label>
               {!this.props.address && (
-              <input 
+              <input
                 type="range"
                 value={this.props.totalSupply}
-                max={this.props.bigMax} 
-                onChange={event => this.props.onChange(event, 'totalSupply')} /> )}
+                max={this.props.bigMax}
+                onChange={event => this.props.onChange(event, 'totalSupply')} />)}
             </div>
           </div>
-          {!this.props.documentReady || <CurveChart documentReady={this.props.documentReady} chartData={this.props.chartData}/>}
+          {this.props.children}
         </div>
         )}
       </div>
     );
   }
+}
 
+BondedTokenAdvanced.propTypes = {
+  totalSupply: PropTypes.number,
+  balance: PropTypes.number,
+  bigMax: PropTypes.number,
+  ratio: PropTypes.number,
+  onChange: PropTypes.func,
+  address: PropTypes.string,
+  advanced: PropTypes.bool,
+  toggleAdvanced: PropTypes.func,
+  children: PropTypes.element
 };
 
 export default BondedTokenAdvanced;

@@ -1116,8 +1116,8 @@ var update = __webpack_require__(15)(content, options);
 if(content.locals) module.exports = content.locals;
 
 if(false) {
-	module.hot.accept("!!../node_modules/css-loader/index.js!./BondedToken.css", function() {
-		var newContent = require("!!../node_modules/css-loader/index.js!./BondedToken.css");
+	module.hot.accept("!!../../node_modules/css-loader/index.js!./BondedToken.css", function() {
+		var newContent = require("!!../../node_modules/css-loader/index.js!./BondedToken.css");
 
 		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 

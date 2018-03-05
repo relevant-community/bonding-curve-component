@@ -1,4 +1,5 @@
-var path = require('path');
+const path = require('path');
+
 module.exports = {
   entry: './src/index.js',
   output: {
@@ -33,5 +34,6 @@ module.exports = {
     'web3': 'commonjs web3',
     'web3-utils': 'commonjs web3-utils',
     'react-dom': 'commonjs react-dom',
+    'prop-types': 'commonjs prop-types',
   }
 };
