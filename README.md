@@ -20,3 +20,5 @@ class App extends Component {
 
 export default App;
 ```
+
+```src/dapp-module/RelevantCoint/index.js``` should be generated with https://github.com/okwme/dapp-scratch  

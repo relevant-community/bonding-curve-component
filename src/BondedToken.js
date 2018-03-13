@@ -113,8 +113,7 @@ class BondedToken extends React.Component {
     let { totalSupply, balance, ratio, amount } = props || this.state;
     if (!totalSupply || !balance || !ratio || !amount) return '0';
 
-    if (totalSupply === 0 || ratio === 0 || balance === 0) return '0';
-    if (amount === 0) return '0';
+    if (totalSupply === 0 || ratio === 0 || balance === 0 || amount === 0) return '0';
     if (amount === totalSupply) return balance;
     if (ratio === 1) return balance;
 
@@ -126,8 +125,7 @@ class BondedToken extends React.Component {
   calculateBuyPrice(props) {
     let { totalSupply, balance, ratio, amount } = props || this.state;
     if (!totalSupply || !balance || !ratio || !amount) return '0';
-    if (totalSupply === 0 || ratio === 0 || balance === 0) return '0';
-    if (amount === 0) return '0';
+    if (totalSupply === 0 || ratio === 0 || balance === 0 || amount === 0) return '0';
     let foo = balance * ((1 + (amount / totalSupply)) ** (1 / ratio) - 1);
     return Math.round(foo * 10000) / 10000;
   }
