@@ -23,9 +23,7 @@ class App extends Component {
           margin: '80px auto 80px auto',
         }}>
           <div className="App">
-            <BondedToken relevant={true}>
-              <Chart />
-            </BondedToken>
+            <BondedToken relevant={true} />
           </div>
         </div>
       </div>

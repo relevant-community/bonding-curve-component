@@ -1,4 +1,5 @@
 import React from 'react';
+import ProtTypes from 'prop-types';
 import BondedTokenHeader from './BondedTokenHeader';
 import BondedTokenTransact from './BondedTokenTransact';
 import BondedTokenAdvanced from './BondedTokenAdvanced';
@@ -14,8 +15,6 @@ class BondedToken extends React.Component {
   constructor(props) {
     super(props);
 
-    this.toggleAdvanced = this.toggleAdvanced.bind(this);
-    this.toggleBuy = this.toggleBuy.bind(this);
     this.submit = this.submit.bind(this);
     this.onChange = this.onChange.bind(this);
     this.calculateSaleReturn = this.calculateSaleReturn.bind(this);
@@ -23,7 +22,6 @@ class BondedToken extends React.Component {
 
     this.bigMax = 1000000;
     this.state = {
-      advanced: false,
       address: '',
       relevant: this.props.relevant,
       loading: false,
@@ -39,13 +37,29 @@ class BondedToken extends React.Component {
       totalSupply: 1000000,
       totalSupplyWei: 0,
       ratio: 0.2,
-      isBuy: true,
       amount: 0,
       readOnly: false,
     };
     this.documentReady = false;
-    this.chartData = {};
   }
+
+  // you must specify what you’re adding to the context
+  // static childContextTypes = {
+  //   contract: ProtTypes.object.isRequired,
+  //   actions: ProtTypes.object.isRequired,
+  // }
+
+  // getChildContext() {
+  //   return {
+  //     contract: this.state,
+  //     contractActions: {
+  //       calculateSaleReturn: this.calculateSaleReturn,
+  //       calculatePurchaseReturn: this.calculatePurchaseReturn,
+  //       onChange: this.onChange,
+  //       submit: this.sbmit,
+  //     }
+  //   };
+  // }
 
   componentDidMount() {
     contractUtils.init(this.state, this.setState.bind(this));
@@ -62,19 +76,6 @@ class BondedToken extends React.Component {
     contractUtils.stopChecking();
   }
 
-  // events
-  toggleBuy() {
-    if (this.state.loading) return;
-    this.setState({
-      amount: 0,
-      isBuy: !this.state.isBuy
-    });
-  }
-  toggleAdvanced() {
-    this.setState({
-      advanced: !this.state.advanced
-    });
-  }
   onChange(event, type) {
     let value = event.target ? event.target.value : null;
     if (type === 'address') {
@@ -173,8 +174,7 @@ class BondedToken extends React.Component {
           tokenBalance={this.state.tokenBalance}
           walletBalance={this.state.walletBalance}
           address={this.state.address}
-          toggleBuy={this.toggleBuy}
-          isBuy={this.state.isBuy}
+          loading={this.state.loading}
           {...curveParams}
         />
 
@@ -182,8 +182,6 @@ class BondedToken extends React.Component {
           bigMax={this.bigMax}
           onChange={this.onChange}
           address={this.state.address}
-          advanced={this.state.advanced}
-          toggleAdvanced={this.toggleAdvanced}
           {...curveParams}
         >
           <CurveChart

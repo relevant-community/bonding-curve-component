@@ -3,18 +3,32 @@ import Switch from 'react-flexible-switch';
 import PropTypes from 'prop-types';
 
 class BondedTokenAdvanced extends React.Component {
+constructor(props) {
+    super(props);
+    this.state = {
+      advanced: false,
+    }
+    this.toggleAdvanced = this.toggleAdvanced.bind(this);
+  }
+
+  toggleAdvanced() {
+    this.setState({
+      advanced: !this.state.advanced
+    });
+  }
+
   render() {
     return (
       <div className=" --BondedTokenAdvanced">
         <div className=" --bondedToken-flex-center">
           <Switch
           switchStyles={{ width: 110, color: 'grey' }}
-          value={this.props.advanced}
+          value={this.state.advanced}
           circleStyles={{ diameter: 16, onColor: 'grey', offColor: 'lightgrey' }}
           labels={{ on: 'Advanced', off: 'Advanced' }}
-          onChange={this.props.toggleAdvanced} />
+          onChange={this.toggleAdvanced} />
         </div>
-        {this.props.advanced && (
+        {this.state.advanced && (
         <div className=" --BondedTokenAdvanced-open">
 
           <div className="--bondedToken-flex --bondedTokenTransact">
@@ -106,8 +120,6 @@ BondedTokenAdvanced.propTypes = {
   ratio: PropTypes.number,
   onChange: PropTypes.func,
   address: PropTypes.string,
-  advanced: PropTypes.bool,
-  toggleAdvanced: PropTypes.func,
   children: PropTypes.element
 };
 
