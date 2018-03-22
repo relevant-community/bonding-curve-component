@@ -24,19 +24,19 @@ class CurveChart extends React.Component {
 
   getChartData(props) {
     let data = [];
-    let { totalSupply, ratio, balance } = props;
+    let { totalSupply, reserveRatio, poolBalance } = props;
     let step = Math.round(totalSupply / 100);
-    let price = balance / (ratio * totalSupply);
+    let price = poolBalance / (reserveRatio * totalSupply);
     let currentPrice = { supply: totalSupply, value: price };
 
     for (let i = step; i < totalSupply * 1.5; i += step) {
       if (i < totalSupply) {
         let eth = 1 * this.props.calculateSaleReturn({ ...props, amount: totalSupply - i });
-        price = (parseFloat(balance, 10) - eth) / (ratio * i);
+        price = (parseFloat(poolBalance, 10) - eth) / (reserveRatio * i);
         data.push({ supply: i, sell: price, value: price });
       } else if (i > totalSupply) {
         let eth = 1 * this.props.calculateBuyPrice({ ...props, amount: i - totalSupply });
-        price = (eth + parseFloat(balance, 10)) / (ratio * i);
+        price = (eth + parseFloat(poolBalance, 10)) / (reserveRatio * i);
         data.push({ supply: 1 * i, buy: price, value: 1 * price });
       }
     }

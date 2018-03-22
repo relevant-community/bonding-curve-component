@@ -1,15 +1,26 @@
 import React from 'react';
 import Switch from 'react-flexible-switch';
+import PropTypes from 'prop-types';
 import BigNumber from 'bignumber.js';
-
+import Web3 from 'web3';
 
 class BondedTokenTransact extends React.Component {
-  constructor(props) {
+  static contextTypes = {
+    drizzle: PropTypes.object,
+  }
+
+  constructor(props, context) {
     super(props);
-    this.toggleBuy = this.toggleBuy.bind(this);
+
     this.state = {
-      isBuy: true
-    }
+      isBuy: true,
+      amount: 0,
+    };
+
+    this.toggleBuy = this.toggleBuy.bind(this);
+    this.submit = this.submit.bind(this);
+
+    this.contracts = context.drizzle.contracts;
   }
 
   toggleBuy() {
@@ -20,7 +31,31 @@ class BondedTokenTransact extends React.Component {
     });
   }
 
+  submit() {
+    if (this.props.amount <= 0 || this.props.loading) return;
+    this.setState({ loading: 'Please Review & Sign Transaction' });
+    if (this.state.isBuy) {
+      let amount = Web3.utils.toWei(this.state.amount);
+      amount = new BigNumber(amount, 10).toString(10);
+      this.contracts.RelevantCoin.methods.buy.cacheSend({
+        value: amount, from: this.props.account
+      });
+    } else {
+      let { decimals } = this.props;
+      let amount = new BigNumber(this.state.amount).times(10 ** decimals);
+
+      this.contracts.RelevantCoin.methods.sell.cacheSend(amount, {
+        from: this.props.account
+      });
+    }
+    this.setState({
+      amount: 0,
+    });
+  }
+
   render() {
+    let { tokenBalance, walletBalance } = this.props;
+
     return (
       <div >
         <div className="--bondedToken-flex --bondedTokenTransact">
@@ -35,16 +70,16 @@ class BondedTokenTransact extends React.Component {
             <input
               type="number"
               max={this.state.isBuy ?
-                (this.props.address ? this.props.walletBalance : this.props.bigMax)
-                : (this.props.address ? this.props.tokenBalance : this.props.totalSupply)}
-              value={this.props.amount}
+                (this.props.address ? walletBalance.toFixed(4) : this.props.bigMax)
+                : (this.props.address ? tokenBalance : tokenBalance.toFixed(4))}
+              value={this.state.amount}
               onChange={event => {
                 if (event.target.value && new BigNumber(event.target.value).gte(event.target.max)) {
                   event.target.value = event.target.max;
-                } else if (!event.target.value || new BigNumber(event.target.value).lte('0')) {
-                  event.target.value = 0;
+                } else if (!event.target.value || new BigNumber(event.target.value).lt('0')) {
+                  event.target.value = '';
                 }
-                this.props.onChange(event, 'amount');
+                this.setState({ amount: event.target.value });
               }} />
           </label>
         </div>
@@ -53,8 +88,8 @@ class BondedTokenTransact extends React.Component {
           <label className={this.state.isBuy ? '--bondedToken-token' : '--bondedToken-eth'}>
             <div>
               {this.state.isBuy ?
-                this.props.calculatePurchaseReturn() :
-                this.props.calculateSaleReturn()}
+                this.props.calculatePurchaseReturn({ amount: this.state.amount }) :
+                this.props.calculateSaleReturn({ amount: this.state.amount })}
             </div>
           </label>
         </div>
@@ -63,7 +98,7 @@ class BondedTokenTransact extends React.Component {
             <button
               value="submit"
               className="--bondedToken-submit"
-              onClick={() => this.props.submit()} >
+              onClick={() => this.submit()} >
               submit
             </button>
           </div>

@@ -3,6 +3,9 @@ import React from 'react';
 class BondedTokenHeader extends React.Component {
   render() {
     if (!this.props.account) return null;
+
+    let { tokenBalance } = this.props;
+
     return (
       <div className="--bondedTokenHeader">
         <div className="--bondedTokenAddress">
@@ -15,13 +18,13 @@ class BondedTokenHeader extends React.Component {
         <div className="--bondedToken-flex">
           <div
             className="--bondedToken-pointer"
-            onClick={() => this.props.onChange({ target: { value: this.props.walletBalance } }, 'amount') }>
-            {this.props.walletBalance} ETH
+          >
+            {this.props.walletBalance.toFixed(2)} ETH
           </div>
           <div
             className="--bondedToken-pointer"
-            onClick={() => this.props.onChange({ target: { value: this.props.tokenBalance } }, 'amount') }>
-            {this.props.tokenBalance} Tokens
+          >
+            {tokenBalance  ? tokenBalance.toFixed(2) : tokenBalance} Tokens
           </div>
         </div>
       </div>

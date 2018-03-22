@@ -53,7 +53,7 @@ class ContractUtils {
       }
       if (web3Provider) {
         global.web3 = new Web3(web3Provider);
-        this.startChecking();
+        // this.startChecking();
       } else {
         reject();
       }
@@ -89,9 +89,8 @@ class ContractUtils {
   async sell(amount) {
     try {
       let decimals = await this.relevantCoin.decimals();
-      decimals = utils.padRight('10', parseInt(decimals, 10));
       let confirm = await this.relevantCoin
-        .sell(new BigNumber(amount).times(decimals).toString(), this.state.account)
+        .sell(new BigNumber(amount).times(10 ** decimals).toString(), this.state.account)
         .on('transactionHash', (hash) => {
           console.log('transactionHash', hash);
           this.setState({ loading: 'Transaction is waiting for confirmation' });
@@ -155,11 +154,10 @@ class ContractUtils {
     let balance = await this.relevantCoin.balanceOf(this.state.account);
     if (this.state.tokenBalanceWei !== balance) {
       let decimals = await this.relevantCoin.decimals();
-      decimals = utils.padRight('10', parseInt(decimals, 10));
       BigNumber.config({ DECIMAL_PLACES: 4 });
       this.setState({
         tokenBalanceWei: balance,
-        tokenBalance: new BigNumber(balance).div(decimals).toString(10)
+        tokenBalance: new BigNumber(balance).div(10 ** decimals).toString(10)
       });
     }
   }
@@ -179,10 +177,9 @@ class ContractUtils {
     let totalSupply = await this.relevantCoin.totalSupply();
     if (this.state.totalSupplyWei !== totalSupply) {
       let decimals = await this.relevantCoin.decimals();
-      decimals = utils.padRight('10', parseInt(decimals, 10));
       this.setState({
         totalSupplyWei: totalSupply,
-        totalSupply: new BigNumber(totalSupply).div(decimals).toString()
+        totalSupply: new BigNumber(totalSupply).div(10 ** decimals).toString()
       });
     }
   }

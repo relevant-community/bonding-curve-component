@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "bignumber.js": "^6.0.0",
-    "drizzle-react": "^1.0.1",
     "prop-types": "^15.6.1",
     "react-flexible-switch": "^1.2.1",
     "recharts": "^1.0.0-beta.10",
@@ -34,6 +33,7 @@
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-core": "^6.24.1",
+    "babel-eslint": "^8.2.2",
     "babel-loader": "^7.0.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
@@ -44,9 +44,11 @@
     "babel-register": "^6.26.0",
     "clean-webpack-plugin": "^0.1.18",
     "css-loader": "^0.28.9",
-    "drizzle": "^1.0.1",
+    "drizzle": "git+https://github.com/james1465/drizzle.git",
+    "drizzle-react": "^1.0.1",
     "eslint": "^4.19.0",
     "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-class-property": "^1.1.0",
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-react": "^7.7.0",
     "html-webpack-plugin": "^3.0.4",

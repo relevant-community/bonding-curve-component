@@ -3,11 +3,11 @@ import Switch from 'react-flexible-switch';
 import PropTypes from 'prop-types';
 
 class BondedTokenAdvanced extends React.Component {
-constructor(props) {
+  constructor(props) {
     super(props);
     this.state = {
       advanced: false,
-    }
+    };
     this.toggleAdvanced = this.toggleAdvanced.bind(this);
   }
 
@@ -18,6 +18,8 @@ constructor(props) {
   }
 
   render() {
+    let { poolBalance, totalSupply, reserveRatio } = this.props;
+
     return (
       <div className=" --BondedTokenAdvanced">
         <div className=" --bondedToken-flex-center">
@@ -50,16 +52,16 @@ constructor(props) {
                 <input
                   readOnly={!!this.props.address}
                   type="number"
-                  value={this.props.balance}
+                  value={poolBalance.toFixed(2)}
                   max={this.props.bigMax}
-                  onChange={event => this.props.onChange(event, 'balance')} />
+                  onChange={event => this.props.onChange(event, 'poolBalance')} />
               </label>
               {!this.props.address && (
               <input
                 type="range"
-                value={this.props.balance}
+                value={poolBalance.toFixed(2)}
                 max={this.props.bigMax}
-                onChange={event => this.props.onChange(event, 'balance')} />)}
+                onChange={event => this.props.onChange(event, 'poolBalance')} />)}
             </div>
           </div>
 
@@ -73,16 +75,16 @@ constructor(props) {
                   step="0.01"
                   max="1"
                   min="0"
-                  value={this.props.ratio}
-                  onChange={event => this.props.onChange(event, 'ratio')} />
+                  value={reserveRatio.toFixed(2)}
+                  onChange={event => this.props.onChange(event, 'reserveRatio')} />
               </label>
               {!this.props.address && (
               <input
                 type="range"
-                value={this.props.ratio}
+                value={reserveRatio.toFixed(2)}
                 max="1"
                 step="0.01"
-                onChange={event => this.props.onChange(event, 'ratio')} />)}
+                onChange={event => this.props.onChange(event, 'reserveRatio')} />)}
             </div>
           </div>
 
@@ -93,14 +95,14 @@ constructor(props) {
                  <input
                     readOnly={!!this.props.address}
                     type="number"
-                    value={this.props.totalSupply}
+                    value={totalSupply.toFixed(2)}
                     max={this.props.bigMax}
                     onChange={event => this.props.onChange(event, 'totalSupply')} />
               </label>
               {!this.props.address && (
               <input
                 type="range"
-                value={this.props.totalSupply}
+                value={totalSupply.toFixed(2)}
                 max={this.props.bigMax}
                 onChange={event => this.props.onChange(event, 'totalSupply')} />)}
             </div>
@@ -115,9 +117,9 @@ constructor(props) {
 
 BondedTokenAdvanced.propTypes = {
   totalSupply: PropTypes.number,
-  balance: PropTypes.number,
+  reserveRatio: PropTypes.number,
+  poolBalance: PropTypes.number,
   bigMax: PropTypes.number,
-  ratio: PropTypes.number,
   onChange: PropTypes.func,
   address: PropTypes.string,
   children: PropTypes.element

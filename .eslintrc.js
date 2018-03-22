@@ -2,11 +2,14 @@ module.exports = {
   "extends": "airbnb-base",
   "plugins": [
       "import",
-      "react"
+      "react",
+      "class-property"
   ],
+  "parser": "babel-eslint",
   "parserOptions": {
     "ecmaFeatures": {
-      "jsx": true
+      "jsx": true,
+      "classes": true,
     }
   },
   "rules": {
