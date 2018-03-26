@@ -20,10 +20,15 @@ let initialized = false;
 let argumentLookup = {};
 
 export function getAccountBalance(state, account) {
+  if (!account) return 0;
   if (!initialized) return null;
-  let balance = state.accounts.balances[account];
-  if (!balance) return null;
-  return parseFloat(utils.fromWei(balance), 10);
+  try {
+    let balance = state.accounts.balances[account];
+    if (!balance) return null;
+    return parseFloat(utils.fromWei(balance), 10);
+  } catch (err) {
+    return 0;
+  }
 }
 
 export function initParams(contract, options) {
@@ -42,7 +47,7 @@ export function getValue(contract, param) {
   let value;
   try {
     let key = params[param].key || param;
-    ({ value } = contract[key][argumentLookup[key]]);
+    ({ value } = contract.state[key][argumentLookup[key]]);
   } catch (err) {
     return null;
   }
@@ -55,6 +60,7 @@ export function getValue(contract, param) {
   } else if (p.convert && p.decimals) {
     value /= (10 ** p.decimals);
   }
+
   if (p.string) value.soString();
   return value;
 }
@@ -66,4 +72,23 @@ export function getAll(contract) {
     result[param] = getValue(contract, param);
   });
   return result;
+}
+
+export async function getNetwork() {
+  if (!window.web3 || !window.web3.eth.net) return null;
+  let network = await window.web3.eth.net.getId();
+  switch (network) {
+    case 1:
+      return "main";
+    case 2:
+     return "morden";
+    case 3:
+      return "ropsten";
+    case 4:
+      return "rinkeby";
+    case 42:
+      return "kovan";
+    default:
+      return "unknown";
+  }
 }

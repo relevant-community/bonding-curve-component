@@ -3,6 +3,13 @@ import Switch from 'react-flexible-switch';
 import PropTypes from 'prop-types';
 
 class BondedTokenAdvanced extends React.Component {
+  static contextTypes = {
+    contractParams: PropTypes.object,
+    onChange: PropTypes.func,
+    address: PropTypes.string,
+    bigMax: PropTypes.number
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -18,7 +25,8 @@ class BondedTokenAdvanced extends React.Component {
   }
 
   render() {
-    let { poolBalance, totalSupply, reserveRatio } = this.props;
+    let { onChange, address, bigMax } = this.context;
+    let { poolBalance, totalSupply, reserveRatio } = this.context.contractParams;
 
     return (
       <div className=" --BondedTokenAdvanced">
@@ -39,8 +47,8 @@ class BondedTokenAdvanced extends React.Component {
               <label className="">
                 <input
                   type="text"
-                  value={this.props.address}
-                  onChange={event => this.props.onChange(event, 'address')} />
+                  value={address}
+                  onChange={event => onChange(event, 'address')} />
               </label>
             </div>
           </div>
@@ -50,18 +58,18 @@ class BondedTokenAdvanced extends React.Component {
             <div>
               <label className="--bondedToken-eth">
                 <input
-                  readOnly={!!this.props.address}
+                  readOnly={!!address}
                   type="number"
                   value={poolBalance.toFixed(2)}
-                  max={this.props.bigMax}
-                  onChange={event => this.props.onChange(event, 'poolBalance')} />
+                  max={bigMax}
+                  onChange={event => onChange(event, 'poolBalance')} />
               </label>
-              {!this.props.address && (
+              {!address && (
               <input
                 type="range"
                 value={poolBalance.toFixed(2)}
-                max={this.props.bigMax}
-                onChange={event => this.props.onChange(event, 'poolBalance')} />)}
+                max={bigMax}
+                onChange={event => onChange(event, 'poolBalance')} />)}
             </div>
           </div>
 
@@ -70,21 +78,21 @@ class BondedTokenAdvanced extends React.Component {
             <div>
               <label className="--bondedToken-ratio">
                 <input
-                  readOnly={!!this.props.address}
+                  readOnly={!!address}
                   type="number"
                   step="0.01"
                   max="1"
                   min="0"
                   value={reserveRatio.toFixed(2)}
-                  onChange={event => this.props.onChange(event, 'reserveRatio')} />
+                  onChange={event => onChange(event, 'reserveRatio')} />
               </label>
-              {!this.props.address && (
+              {!address && (
               <input
                 type="range"
                 value={reserveRatio.toFixed(2)}
                 max="1"
                 step="0.01"
-                onChange={event => this.props.onChange(event, 'reserveRatio')} />)}
+                onChange={event => onChange(event, 'reserveRatio')} />)}
             </div>
           </div>
 
@@ -93,18 +101,18 @@ class BondedTokenAdvanced extends React.Component {
             <div>
               <label className="--bondedToken-token">
                  <input
-                    readOnly={!!this.props.address}
+                    readOnly={!!address}
                     type="number"
                     value={totalSupply.toFixed(2)}
-                    max={this.props.bigMax}
-                    onChange={event => this.props.onChange(event, 'totalSupply')} />
+                    max={bigMax}
+                    onChange={event => onChange(event, 'totalSupply')} />
               </label>
-              {!this.props.address && (
+              {!address && (
               <input
                 type="range"
                 value={totalSupply.toFixed(2)}
-                max={this.props.bigMax}
-                onChange={event => this.props.onChange(event, 'totalSupply')} />)}
+                max={bigMax}
+                onChange={event => onChange(event, 'totalSupply')} />)}
             </div>
           </div>
           {this.props.children}

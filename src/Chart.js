@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const Recharts = require('recharts');
 
@@ -13,6 +14,12 @@ const {
 } = Recharts;
 
 class CurveChart extends React.Component {
+  static contextTypes = {
+    calculateBuyPrice: PropTypes.func,
+    calculateSaleReturn: PropTypes.func,
+    contractParams: PropTypes.object,
+  }
+
   constructor(props) {
     super(props);
     this.getChartData = this.getChartData.bind(this);
@@ -22,20 +29,23 @@ class CurveChart extends React.Component {
     this.forceUpdate();
   }
 
-  getChartData(props) {
+  getChartData() {
+    let { calculateSaleReturn, calculateBuyPrice } = this.context;
+    let { totalSupply, reserveRatio, poolBalance } = this.context.contractParams;
+    let props = this.context.contractParams;
+
     let data = [];
-    let { totalSupply, reserveRatio, poolBalance } = props;
     let step = Math.round(totalSupply / 100);
     let price = poolBalance / (reserveRatio * totalSupply);
     let currentPrice = { supply: totalSupply, value: price };
 
     for (let i = step; i < totalSupply * 1.5; i += step) {
       if (i < totalSupply) {
-        let eth = 1 * this.props.calculateSaleReturn({ ...props, amount: totalSupply - i });
+        let eth = 1 * calculateSaleReturn({ ...props, amount: totalSupply - i });
         price = (parseFloat(poolBalance, 10) - eth) / (reserveRatio * i);
         data.push({ supply: i, sell: price, value: price });
       } else if (i > totalSupply) {
-        let eth = 1 * this.props.calculateBuyPrice({ ...props, amount: i - totalSupply });
+        let eth = 1 * calculateBuyPrice({ ...props, amount: i - totalSupply });
         price = (eth + parseFloat(poolBalance, 10)) / (reserveRatio * i);
         data.push({ supply: 1 * i, buy: price, value: 1 * price });
       }
@@ -46,7 +56,7 @@ class CurveChart extends React.Component {
 
   render() {
     if (!this.documentReady) return null;
-    let { data, currentPrice } = this.getChartData(this.props);
+    let { data, currentPrice } = this.getChartData();
     let width = Math.min(600, (window.innerWidth < 480 ? window.innerWidth : 480) - 30);
     let height = width * 2 / 3;
     return (

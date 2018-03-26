@@ -1,11 +1,20 @@
 import React, { Component } from 'react';
-import { Drizzle, generateStore } from 'drizzle';
+import { Drizzle, generateStore, reducer, rootSaga } from 'drizzle';
 import { DrizzleProvider, drizzleConnect } from 'drizzle-react';
 import ReactDOM from 'react-dom';
+
+
+import { Provider } from 'react-redux'
+import { createStore } from 'redux'
+
 import BondedToken from '../src/BondedToken';
 import '../src/css/App.css';
 import '../src/css/index.css';
 import Chart from '../src/Chart';
+import BondedTokenHeader from '../src/BondedTokenHeader';
+import BondedTokenTransact from '../src/BondedTokenTransact';
+import BondedTokenAdvanced from '../src/BondedTokenAdvanced';
+import store from './store';
 
 import RelevantCoin from '../src/contracts/RelevantCoin.json';
 
@@ -19,7 +28,8 @@ let options = {
   //   ]
   },
   web3: {
-    ignoreMetamask: true,
+    // ignoreMetamask: true,
+    useMetamask: true,
     block: false,
     fallback: {
       type: 'ws',
@@ -43,7 +53,13 @@ class App extends Component {
           margin: '80px auto 80px auto',
         }}>
           <div className="App">
-            <BondedToken {...this.props} relevant={true} />
+            <BondedToken>
+              <BondedTokenHeader />
+              <BondedTokenTransact />
+              <BondedTokenAdvanced>
+                <Chart />
+              </BondedTokenAdvanced>
+            </BondedToken>
           </div>
         </div>
       </div>
@@ -51,18 +67,12 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    drizzleStatus: state.drizzleStatus,
-    RelevantCoin: state.contracts.RelevantCoin,
-    drizzle: state,
-  };
-};
 
-const AppContainer = drizzleConnect(App, mapStateToProps);
-
-ReactDOM.render((
-  <DrizzleProvider options={options}>
-    <AppContainer />
-  </DrizzleProvider>), document.body
+ReactDOM.render(
+  (<Provider store={store}>
+    <DrizzleProvider options={options}>
+      <App />
+    </DrizzleProvider>
+  </Provider>),
+  document.body
 );

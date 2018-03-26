@@ -1,30 +1,65 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import * as relevantCoinHelper from './relevantCoinHelper';
 
 class BondedTokenHeader extends React.Component {
-  render() {
-    if (!this.props.account) return null;
+  static contextTypes = {
+    walletBalance: PropTypes.number,
+    account: PropTypes.string,
+    contractParams: PropTypes.object,
+    transaction: PropTypes.object,
+  }
 
-    let { tokenBalance } = this.props;
+  constructor(props) {
+    super(props);
+    this.state = {
+      network: '',
+    };
+  }
+
+  componentWillUpdate() {
+    relevantCoinHelper.getNetwork()
+      .then(network => {
+        if (this.state.network !== network) {
+          this.setState({ network })
+        }
+      })
+  }
+
+  render() {
+    let { walletBalance, account, transaction } = this.context;
+    let { tokenBalance } = this.context.contractParams;
+    let network = this.state.network === 'main' ? '' : this.state.network + '.';
 
     return (
       <div className="--bondedTokenHeader">
+        {transaction.status && transaction.status === 'pending' ? (
+          <div>Pending tx:{' '}
+            <a
+            target="_blank"
+            href={`https://${network}etherscan.io/tx/${transaction.tx}`}>
+            {account}
+            </a>
+          </div>
+        ) : null}
         <div className="--bondedTokenAddress">
           <a
           target="_blank"
-          href={'https://etherscan.io/address/' + this.props.account}>
-          {this.props.account}
+          href={`https://${network}etherscan.io/address/${account}`}
+          >
+            {account}
           </a>
         </div>
         <div className="--bondedToken-flex">
           <div
             className="--bondedToken-pointer"
           >
-            {this.props.walletBalance.toFixed(2)} ETH
+            {walletBalance.toFixed(2)} ETH
           </div>
           <div
             className="--bondedToken-pointer"
           >
-            {tokenBalance  ? tokenBalance.toFixed(2) : tokenBalance} Tokens
+            {tokenBalance ? tokenBalance.toFixed(2) : tokenBalance} Tokens
           </div>
         </div>
       </div>

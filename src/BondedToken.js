@@ -1,42 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { drizzleConnect } from 'drizzle-react';
-
-import BondedTokenHeader from './BondedTokenHeader';
-import BondedTokenTransact from './BondedTokenTransact';
-import BondedTokenAdvanced from './BondedTokenAdvanced';
-import CurveChart from './Chart';
-import contractUtils from './contractUtils';
 import './css/BondedToken.css';
 import * as contractHelper from './relevantCoinHelper';
+import { connect } from 'react-redux';
 
+const Web3 = require('web3');
 const utils = require('web3-utils');
-// TODO do we need this ?
-// const ZeroClientProvider = require('web3-provider-engine/zero.js')
 
 class BondedToken extends React.Component {
-  static contextTypes = {
-    drizzle: PropTypes.object,
-  }
-
   constructor(props, context) {
     super(props);
-
-    this.contracts = context.drizzle.contracts;
-    console.log(context.drizzle);
 
     this.onChange = this.onChange.bind(this);
     this.calculateSaleReturn = this.calculateSaleReturn.bind(this);
     this.calculatePurchaseReturn = this.calculatePurchaseReturn.bind(this);
     this.calculateBuyPrice = this.calculateBuyPrice.bind(this);
+    this.getChildContext = this.getChildContext.bind(this);
 
     this.bigMax = 1000000;
     this.state = {
       address: '',
       loading: false,
-      unlocked: false,
       account: null,
-      network: null,
 
       walletBalance: 0,
       tokenBalance: 0,
@@ -45,51 +31,90 @@ class BondedToken extends React.Component {
       reserveRatio: 0.2,
       decimals: 18,
     };
+    this.transaction = {};
   }
 
   // you must specify what you’re adding to the context
-  // static childContextTypes = {
-  //   contract: ProtTypes.object.isRequired,
-  //   actions: ProtTypes.object.isRequired,
-  // }
-
-  // getChildContext() {
-  //   return {
-  //     contract: this.state,
-  //     contractActions: {
-  //       calculateSaleReturn: this.calculateSaleReturn,
-  //       calculatePurchaseReturn: this.calculatePurchaseReturn,
-  //       onChange: this.onChange,
-  //       submit: this.sbmit,
-  //     }
-  //   };
-  // }
-
-  componentDidMount() {
-    // contractUtils.init(this.state, this.setState.bind(this));
-    contractUtils.initWeb3()
-      .catch((error) => {
-        console.log(error);
-      });
-
-    this.forceUpdate();
+  static childContextTypes = {
+    walletBalance: PropTypes.number,
+    address: PropTypes.string,
+    account: PropTypes.string,
+    contractParams: PropTypes.object,
+    calculatePurchaseReturn: PropTypes.func,
+    calculateBuyPrice: PropTypes.func,
+    calculateSaleReturn: PropTypes.func,
+    bigMax: PropTypes.number,
+    loading: PropTypes.bool,
+    onChange: PropTypes.func,
+    RelevantCoin: PropTypes.object,
+    transaction: PropTypes.object,
   }
 
-  componentWillUpdate(next) {
-    if (!this.props.drizzleStatus.initialized && next.drizzleStatus.initialized) {
-      let options = {
-        args: { tokenBalance: this.props.drizzle.accounts.ids[0] }
-      };
-      this.setState({
-        account: this.props.drizzle.accounts.ids[0],
-        address: this.contracts.RelevantCoin._address
-      });
-      contractHelper.initParams(this.contracts.RelevantCoin, options);
+  getChildContext() {
+    let { tokenBalance, poolBalance, totalSupply, reserveRatio, decimals } = {};
+    if (this.state.address) {
+      ({ tokenBalance, poolBalance, totalSupply, reserveRatio, decimals } =
+        contractHelper.getAll(this.props.RelevantCoin) || this.state);
+    } else {
+      ({ tokenBalance, poolBalance, totalSupply, reserveRatio, decimals } = this.state);
     }
+    let walletBalance = contractHelper.getAccountBalance(this.props.drizzle, this.state.account) || this.state.walletBalance;
+
+    let contractParams = { tokenBalance, poolBalance, totalSupply, reserveRatio, decimals };
+
+    return {
+      walletBalance,
+      contractParams,
+      calculatePurchaseReturn: this.calculatePurchaseReturn,
+      calculateSaleReturn: this.calculateSaleReturn,
+      calculateBuyPrice: this.calculateBuyPrice,
+      bigMax: this.bigMax,
+      loading: this.transaction.status === "pending",
+      address: this.state.address,
+      account: this.state.account,
+      onChange: this.onChange,
+      RelevantCoin: this.props.RelevantCoin,
+      transaction: this.transaction,
+    };
   }
 
-  componentWillUnmount() {
-    contractUtils.stopChecking();
+  componentWillUpdate(nextProps) {
+    if (!this.props.drizzleStatus.initialized && nextProps.drizzleStatus.initialized) {
+      let options = {
+        args: { tokenBalance: nextProps.drizzle.accounts.ids[0] }
+      };
+      // console.log(nextProps.drizzle.contracts);
+      this.setState({
+        account: nextProps.drizzle.accounts.ids[0],
+        address: nextProps.RelevantCoin.address
+      });
+      contractHelper.initParams(nextProps.RelevantCoin, options);
+    }
+
+    // in case we are switching accounts via metamask
+    if (this.props.drizzle.accounts !== nextProps.drizzle.accounts && nextProps.drizzleStatus.initialized) {
+      this.setState({
+        account: nextProps.drizzle.accounts.ids[0],
+      });
+      let options = {
+        args: { tokenBalance: nextProps.drizzle.accounts.ids[0] }
+      };
+      contractHelper.initParams(nextProps.RelevantCoin, options);
+    }
+
+    let l = nextProps.drizzle.transactionStack.length;
+    if (l) {
+      let recentTransaction = nextProps.drizzle.transactionStack[l-1];
+      let latestStatus = nextProps.drizzle.transactions[recentTransaction].status;
+      if (latestStatus === 'success') {
+        this.transaction = {};
+      } else {
+        this.transaction = {
+          status: latestStatus,
+          tx: recentTransaction
+        }
+      }
+    }
   }
 
   onChange(event, type) {
@@ -99,19 +124,18 @@ class BondedToken extends React.Component {
       if (event.target.value && !utils.isAddress(event.target.value)) {
         return;
       } else if (event.target.value) {
+        // TODO update contract
         // contractUtils.updateContractAddress(event.target.value);
       }
     }
     if (type === 'totalSupply') {
       value = Math.max(1000, event.target.value);
     }
-    if (this.state.loading) return;
+    if (this.transaction.status === "pending") return;
     let state = {};
     state[type] = event.target ? value : event;
     this.setState(state);
   }
-
-  // methods
 
   /* calculateSaleReturn
     Return = _connectorBalance * (1 - (1 - _sellAmount / _supply) ^ (1 / (_connectorWeight / 1000000)))
@@ -157,58 +181,24 @@ class BondedToken extends React.Component {
   }
 
   render() {
-    // console.log(this.props.drizzle);
-    let { tokenBalance, poolBalance, totalSupply, reserveRatio, decimals } = {};
-    if (this.state.address) {
-      ({ tokenBalance, poolBalance, totalSupply, reserveRatio, decimals } =
-        contractHelper.getAll(this.props.RelevantCoin) || this.state);
-    } else {
-      ({ tokenBalance, poolBalance, totalSupply, reserveRatio, decimals } = this.state);
-    }
-
-    let walletBalance = contractHelper.getAccountBalance(this.props.drizzle, this.state.account) || this.state.walletBalance;
-
-    let contractParams = { tokenBalance, poolBalance, totalSupply, reserveRatio, decimals };
-
-    if (this.props.children) return this.props.children;
+    console.log(this.props);
     return (
       <div className="--bondedToken">
-        {this.state.loading && (
-          <div>{this.state.loading}</div>
-        )}
-
-        <BondedTokenHeader
-          account={this.state.account}
-          walletBalance={walletBalance}
-          {...contractParams}
-        />
-
-        <BondedTokenTransact
-          calculateSaleReturn={this.calculateSaleReturn}
-          calculatePurchaseReturn={this.calculatePurchaseReturn}
-          bigMax={this.bigMax}
-          loading={this.state.loading}
-          address={this.state.address}
-          account={this.state.account}
-          walletBalance={walletBalance}
-          {...contractParams}
-        />
-
-        <BondedTokenAdvanced
-          bigMax={this.bigMax}
-          onChange={this.onChange}
-          address={this.state.address}
-          {...contractParams}
-        >
-          <CurveChart
-            calculateBuyPrice={this.calculateBuyPrice}
-            calculateSaleReturn={this.calculateSaleReturn}
-            {...contractParams}
-          />
-        </BondedTokenAdvanced>
+        {this.props.children}
       </div>
     );
   }
 }
 
-export default BondedToken;
+const mapStateToProps = state => {
+  return {
+    drizzleStatus: state.drizzleStatus,
+    RelevantCoin: state.contracts.RelevantCoin,
+    drizzle: state,
+  };
+};
+
+// export default connect(mapStateToProps, {})(BondedToken);
+export default drizzleConnect(BondedToken, mapStateToProps);
+
+// export default BondedToken;

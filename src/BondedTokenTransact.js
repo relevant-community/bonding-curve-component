@@ -6,10 +6,18 @@ import Web3 from 'web3';
 
 class BondedTokenTransact extends React.Component {
   static contextTypes = {
-    drizzle: PropTypes.object,
+    walletBalance: PropTypes.number,
+    account: PropTypes.string,
+    calculatePurchaseReturn: PropTypes.func,
+    calculateSaleReturn: PropTypes.func,
+    address: PropTypes.string,
+    loading: PropTypes.bool,
+    contractParams: PropTypes.object,
+    bigMax: PropTypes.number,
+    RelevantCoin: PropTypes.object
   }
 
-  constructor(props, context) {
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -19,12 +27,19 @@ class BondedTokenTransact extends React.Component {
 
     this.toggleBuy = this.toggleBuy.bind(this);
     this.submit = this.submit.bind(this);
+  }
 
-    this.contracts = context.drizzle.contracts;
+  componentWillReceiveProps(nextProps, nextContext) {
+    if (this.context.loading && !nextContext.loading) {
+      this.setState({
+        amount: 0,
+      });
+    }
   }
 
   toggleBuy() {
-    if (this.props.loading) return;
+    let { loading } = this.context;
+    if (loading) return;
     this.setState({
       amount: 0,
       isBuy: !this.state.isBuy
@@ -32,29 +47,34 @@ class BondedTokenTransact extends React.Component {
   }
 
   submit() {
-    if (this.props.amount <= 0 || this.props.loading) return;
+    let { account, loading, RelevantCoin } = this.context;
+    let { decimals } = this.context.contractParams;
+    if (this.state.amount <= 0 || loading) return;
     this.setState({ loading: 'Please Review & Sign Transaction' });
     if (this.state.isBuy) {
       let amount = Web3.utils.toWei(this.state.amount);
       amount = new BigNumber(amount, 10).toString(10);
-      this.contracts.RelevantCoin.methods.buy.cacheSend({
-        value: amount, from: this.props.account
+      RelevantCoin.methods.buy.cacheSend({
+        value: amount, from: account
       });
     } else {
-      let { decimals } = this.props;
       let amount = new BigNumber(this.state.amount).times(10 ** decimals);
-
-      this.contracts.RelevantCoin.methods.sell.cacheSend(amount, {
-        from: this.props.account
+      RelevantCoin.methods.sell.cacheSend(amount, {
+        from: account
       });
     }
-    this.setState({
-      amount: 0,
-    });
   }
 
   render() {
-    let { tokenBalance, walletBalance } = this.props;
+    let {
+      walletBalance,
+      calculatePurchaseReturn,
+      calculateSaleReturn,
+      address,
+      bigMax,
+      loading
+    } = this.context;
+    let { tokenBalance } = this.context.contractParams;
 
     return (
       <div >
@@ -70,10 +90,11 @@ class BondedTokenTransact extends React.Component {
             <input
               type="number"
               max={this.state.isBuy ?
-                (this.props.address ? walletBalance.toFixed(4) : this.props.bigMax)
-                : (this.props.address ? tokenBalance : tokenBalance.toFixed(4))}
+                (address ? walletBalance.toFixed(4) : bigMax)
+                : (address ? tokenBalance : tokenBalance.toFixed(4))}
               value={this.state.amount}
               onChange={event => {
+                if (loading) return;
                 if (event.target.value && new BigNumber(event.target.value).gte(event.target.max)) {
                   event.target.value = event.target.max;
                 } else if (!event.target.value || new BigNumber(event.target.value).lt('0')) {
@@ -88,12 +109,12 @@ class BondedTokenTransact extends React.Component {
           <label className={this.state.isBuy ? '--bondedToken-token' : '--bondedToken-eth'}>
             <div>
               {this.state.isBuy ?
-                this.props.calculatePurchaseReturn({ amount: this.state.amount }) :
-                this.props.calculateSaleReturn({ amount: this.state.amount })}
+                calculatePurchaseReturn({ amount: this.state.amount }) :
+                calculateSaleReturn({ amount: this.state.amount })}
             </div>
           </label>
         </div>
-        {this.props.address && (
+        {address && (
         <div className="--bondedToken-submit-container">
             <button
               value="submit"
