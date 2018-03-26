@@ -3,7 +3,6 @@ import { Drizzle, generateStore, reducer, rootSaga } from 'drizzle';
 import { DrizzleProvider, drizzleConnect } from 'drizzle-react';
 import ReactDOM from 'react-dom';
 
-
 import { Provider } from 'react-redux'
 import { createStore } from 'redux'
 
@@ -22,11 +21,7 @@ let options = {
   contracts: [
     RelevantCoin
   ],
-  events: {
-  //   contractName: [
-  //     eventName
-  //   ]
-  },
+  events: {},
   web3: {
     // ignoreMetamask: true,
     useMetamask: true,
@@ -47,7 +42,7 @@ class App extends Component {
           <a rel="noopener noreferrer" href="https://relevant.community" target="_blank">
             Relevant
           </a>
-          's Bonded Curve Token Contract</h3>
+          Bonded Curve Token Contract</h3>
         <div style={{
           maxWidth: '480px',
           margin: '80px auto 80px auto',
@@ -70,7 +65,7 @@ class App extends Component {
 
 ReactDOM.render(
   (<Provider store={store}>
-    <DrizzleProvider options={options}>
+    <DrizzleProvider options={options} state={state}>
       <App />
     </DrizzleProvider>
   </Provider>),

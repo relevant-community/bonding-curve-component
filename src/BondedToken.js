@@ -198,7 +198,8 @@ const mapStateToProps = state => {
   };
 };
 
-// export default connect(mapStateToProps, {})(BondedToken);
-export default drizzleConnect(BondedToken, mapStateToProps);
+// use standard redux connect when using redux store
+export default connect(mapStateToProps, {})(BondedToken);
 
-// export default BondedToken;
+// use drizzleConnect for standalone apps
+// export default drizzleConnect(BondedToken, mapStateToProps);

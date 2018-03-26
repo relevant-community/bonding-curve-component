@@ -31,6 +31,7 @@ module.exports = {
     "prefer-arrow-callback": 0,
     "func-names": 0,
     "object-curly-newline": 0,
+    "class-methods-use-this": 0,
   },
   "env": {
     "browser": true,
