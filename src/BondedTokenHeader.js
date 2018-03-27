@@ -8,28 +8,18 @@ class BondedTokenHeader extends React.Component {
     account: PropTypes.string,
     contractParams: PropTypes.object,
     transaction: PropTypes.object,
+    web3State: PropTypes.object,
   }
 
   constructor(props) {
     super(props);
-    this.state = {
-      network: '',
-    };
-  }
-
-  componentWillUpdate() {
-    relevantCoinHelper.getNetwork()
-      .then(network => {
-        if (this.state.network !== network) {
-          this.setState({ network })
-        }
-      })
   }
 
   render() {
-    let { walletBalance, account, transaction } = this.context;
+    let { walletBalance, account, transaction, web3State } = this.context;
     let { tokenBalance } = this.context.contractParams;
-    let network = this.state.network === 'main' ? '' : this.state.network + '.';
+    let network = relevantCoinHelper.getNetwork(web3State);
+    network = network === 'main' ? '' : network + '.';
 
     return (
       <div className="--bondedTokenHeader">

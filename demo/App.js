@@ -22,7 +22,10 @@ let options = {
     RelevantCoin
   ],
   events: {},
-  polls: 3000,
+  polls: {
+    blocks: 300,
+    accounts: 300,
+  },
   web3: {
     // ignoreMetamask: true,
     useMetamask: true,

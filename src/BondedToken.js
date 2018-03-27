@@ -48,6 +48,7 @@ class BondedToken extends React.Component {
     onChange: PropTypes.func,
     RelevantCoin: PropTypes.object,
     transaction: PropTypes.object,
+    web3State: PropTypes.object,
   }
 
   getChildContext() {
@@ -75,6 +76,7 @@ class BondedToken extends React.Component {
       onChange: this.onChange,
       RelevantCoin: this.props.RelevantCoin,
       transaction: this.transaction,
+      web3State: this.props.drizzle.web3
     };
   }
 
@@ -98,7 +100,7 @@ class BondedToken extends React.Component {
         account,
       });
       let options = {
-        args: { tokenBalance: nextProps.drizzle.accountBalances[account] }
+        args: { tokenBalance: account }
       };
       contractHelper.initParams(nextProps.RelevantCoin, options);
     }

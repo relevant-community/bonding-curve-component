@@ -23,7 +23,7 @@ export function getAccountBalance(state, account) {
   if (!account) return 0;
   if (!initialized) return null;
   try {
-    let balance = state.accounts.balances[account];
+    let balance = state.accountBalances[account];
     if (!balance) return null;
     return parseFloat(utils.fromWei(balance), 10);
   } catch (err) {
@@ -74,9 +74,8 @@ export function getAll(contract) {
   return result;
 }
 
-export async function getNetwork() {
-  if (!window.web3 || !window.web3.eth.net) return false;
-  let network = await window.web3.eth.net.getId();
+export function getNetwork(web3) {
+  let network = web3.networkId;
   switch (network) {
     case 1:
       return 'main';
