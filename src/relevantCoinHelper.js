@@ -75,20 +75,20 @@ export function getAll(contract) {
 }
 
 export async function getNetwork() {
-  if (!window.web3 || !window.web3.eth.net) return null;
+  if (!window.web3 || !window.web3.eth.net) return false;
   let network = await window.web3.eth.net.getId();
   switch (network) {
     case 1:
-      return "main";
+      return 'main';
     case 2:
-     return "morden";
+      return 'morden';
     case 3:
-      return "ropsten";
+      return 'ropsten';
     case 4:
-      return "rinkeby";
+      return 'rinkeby';
     case 42:
-      return "kovan";
+      return 'kovan';
     default:
-      return "unknown";
+      return 'unknown';
   }
 }

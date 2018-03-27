@@ -22,6 +22,7 @@ let options = {
     RelevantCoin
   ],
   events: {},
+  polls: 3000,
   web3: {
     // ignoreMetamask: true,
     useMetamask: true,
@@ -38,11 +39,11 @@ class App extends Component {
     return (
       <div>
         <h3 style={{ textAlign: 'center' }}>
-          Welcome to{' '}
+          Welcome to the{' '}
           <a rel="noopener noreferrer" href="https://relevant.community" target="_blank">
-            Relevant
+            Relevant{' '}
           </a>
-          Bonded Curve Token Contract</h3>
+          Bonding Curve Token Contract</h3>
         <div style={{
           maxWidth: '480px',
           margin: '80px auto 80px auto',
@@ -65,7 +66,10 @@ class App extends Component {
 
 ReactDOM.render(
   (<Provider store={store}>
-    <DrizzleProvider options={options} state={state}>
+    <DrizzleProvider
+      options={options}
+      store={store} /* adding state prop tell DrizzleProvider to user existing redux store */
+    >
       <App />
     </DrizzleProvider>
   </Provider>),

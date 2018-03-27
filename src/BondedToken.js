@@ -79,13 +79,14 @@ class BondedToken extends React.Component {
   }
 
   componentWillUpdate(nextProps) {
+    let account = nextProps.drizzle.accounts[0];
     if (!this.props.drizzleStatus.initialized && nextProps.drizzleStatus.initialized) {
       let options = {
-        args: { tokenBalance: nextProps.drizzle.accounts.ids[0] }
+        args: { tokenBalance: account }
       };
       // console.log(nextProps.drizzle.contracts);
       this.setState({
-        account: nextProps.drizzle.accounts.ids[0],
+        account,
         address: nextProps.RelevantCoin.address
       });
       contractHelper.initParams(nextProps.RelevantCoin, options);
@@ -94,10 +95,10 @@ class BondedToken extends React.Component {
     // in case we are switching accounts via metamask
     if (this.props.drizzle.accounts !== nextProps.drizzle.accounts && nextProps.drizzleStatus.initialized) {
       this.setState({
-        account: nextProps.drizzle.accounts.ids[0],
+        account,
       });
       let options = {
-        args: { tokenBalance: nextProps.drizzle.accounts.ids[0] }
+        args: { tokenBalance: nextProps.drizzle.accountBalances[account] }
       };
       contractHelper.initParams(nextProps.RelevantCoin, options);
     }
@@ -112,7 +113,7 @@ class BondedToken extends React.Component {
         this.transaction = {
           status: latestStatus,
           tx: recentTransaction
-        }
+        };
       }
     }
   }
