@@ -6,15 +6,10 @@ import Web3 from 'web3';
 
 class BondedTokenTransact extends React.Component {
   static contextTypes = {
-    walletBalance: PropTypes.number,
-    account: PropTypes.string,
-    calculatePurchaseReturn: PropTypes.func,
-    calculateSaleReturn: PropTypes.func,
-    address: PropTypes.string,
-    loading: PropTypes.bool,
     contractParams: PropTypes.object,
-    bigMax: PropTypes.number,
-    RelevantCoin: PropTypes.object
+    accountInfo: PropTypes.object,
+    contractActions: PropTypes.object,
+    bondingCurveState: PropTypes.object
   }
 
   constructor(props) {
@@ -27,10 +22,12 @@ class BondedTokenTransact extends React.Component {
 
     this.toggleBuy = this.toggleBuy.bind(this);
     this.submit = this.submit.bind(this);
+
+    this.bigMax = 1000000;
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
-    if (this.context.loading && !nextContext.loading) {
+    if (this.context.bondingCurveState.loading && !nextContext.bondingCurveState.loading) {
       this.setState({
         amount: 0,
       });
@@ -38,7 +35,7 @@ class BondedTokenTransact extends React.Component {
   }
 
   toggleBuy() {
-    let { loading } = this.context;
+    let { loading } = this.context.bondingCurveState;
     if (loading) return;
     this.setState({
       amount: 0,
@@ -47,10 +44,13 @@ class BondedTokenTransact extends React.Component {
   }
 
   submit() {
-    let { account, loading, RelevantCoin } = this.context;
-    let { decimals } = this.context.contractParams;
+    let { loading } = this.context.bondingCurveState;
+    let { account } = this.context.accountInfo;
+    let { decimals, RelevantCoin } = this.context.contractParams;
     if (this.state.amount <= 0 || loading) return;
-    this.setState({ loading: 'Please Review & Sign Transaction' });
+
+    // this.setState({ loading: 'Please Review & Sign Transaction' });
+
     if (this.state.isBuy) {
       let amount = Web3.utils.toWei(this.state.amount);
       amount = new BigNumber(amount, 10).toString(10);
@@ -67,61 +67,129 @@ class BondedTokenTransact extends React.Component {
 
   render() {
     let {
-      walletBalance,
       calculatePurchaseReturn,
-      calculateSaleReturn,
-      address,
-      bigMax,
-      loading
-    } = this.context;
-    let { tokenBalance } = this.context.contractParams;
+      calculateSaleReturn
+    } = this.context.contractActions;
+    let { drizzleStatus, loading } = this.context.bondingCurveState;
+    let { walletBalance, account } = this.context.accountInfo;
+    let { tokenBalance, symbol, address, priceEth, priceDollar } = this.context.contractParams;
+
+    let color = this.props.accentColor || 'blue';
+    let { bigMax } = this;
+
+    let button = (
+      <button
+        value="submit"
+        className="--bondedToken-submit"
+        onClick={() => this.submit()} >
+        submit
+      </button>
+    );
+
+    if (this.props.children) {
+      button = React.cloneElement(
+        this.props.children,
+        { ...this.props.children.props,
+          onClick: () => this.submit() }
+      );
+    }
+
+    // if (!drizzleStatus.initialized) {
+    //   return (
+    //     <p>
+    //       Connecting to Metamask...
+    //     </p>
+    //   );
+    // }
+
+    if (!account) {
+      let network = this.props.network || 'main';
+      let getTokens = (
+        <p>
+          You can get some free test network Ether here:{' '}
+          <a href="https://faucet.rinkeby.io/">https://faucet.rinkeby.io/</a>
+          <br/>(pro-tip: use your GooglePlus account)
+        </p>
+      );
+      return (
+        <div className="--bondedToken-not-connected">
+          <p>
+          Please enable your Metamask wallet and connect to the {network} network.
+          </p>
+          <p>
+          Don't have Metamask? Download it here:{' '}
+          <a href="https://metamask.io/">https://metamask.io/</a>
+          </p>
+          {network !== 'main' ? getTokens : null}
+        </div>
+      );
+    }
 
     return (
       <div >
         <div className="--bondedToken-flex --bondedTokenTransact">
           <Switch
-            switchStyles={{ width: 80 }}
+            switchStyles={{ width: 100 }}
             value={this.state.isBuy}
-            circleStyles={{ diameter: 16, onColor: 'grey', offColor: 'grey' }}
-            labels={{ on: 'Spend', off: 'Sell' }}
+            circleStyles={{
+              diameter: 20,
+              onColor: color,
+              offColor: color,
+              color
+            }}
+            labels={{ on: 'BUY', off: 'SELL' }}
             onChange={() => this.toggleBuy()}
           />
-          <label className={this.state.isBuy ? '--bondedToken-eth' : '--bondedToken-token'}>
+          <div style={{ fontSize: '.8rem' }}>
+            1 {symbol} = {priceEth} ETH / ${priceDollar}
+          </div>
+        </div>
+
+        <div
+          className="--bondedToken-flex --bondedTokenTransact"
+        >
+          <label className="--bondedToken-flex" style={{ borderBottomColor: color }}>
+            <div>Spend:</div>
             <input
+              onFocus={e => {
+                if (e.target.value === '0') this.setState({ amount: '' });
+              }}
+              onBlur={e => {
+                if (e.target.value === '') this.setState({ amount: 0 });
+              }}
               type="number"
               max={this.state.isBuy ?
                 (address ? walletBalance.toFixed(4) : bigMax)
-                : (address ? tokenBalance : tokenBalance.toFixed(4))}
+                : tokenBalance.toFixed(4)}
               value={this.state.amount}
               onChange={event => {
                 if (loading) return;
-                if (event.target.value && new BigNumber(event.target.value).gte(event.target.max)) {
+                if (event.target.value * 1 > event.target.max) {
                   event.target.value = event.target.max;
-                } else if (!event.target.value || new BigNumber(event.target.value).lt('0')) {
+                } else if (!event.target.value || event.target.value * 1 < 0) {
                   event.target.value = '';
                 }
                 this.setState({ amount: event.target.value });
-              }} />
+              }}
+              />
+              {this.state.isBuy ? 'ETH' : symbol}
           </label>
         </div>
+
         <div className="--bondedToken-flex --bondedTokenTransact">
-          <div>For</div>
-          <label className={this.state.isBuy ? '--bondedToken-token' : '--bondedToken-eth'}>
-            <div>
-              {this.state.isBuy ?
-                calculatePurchaseReturn({ amount: this.state.amount }) :
-                calculateSaleReturn({ amount: this.state.amount })}
-            </div>
-          </label>
+          <div>Recieve:</div>
+          <div>
+            {this.state.isBuy ?
+              calculatePurchaseReturn({ amount: this.state.amount }) :
+              calculateSaleReturn({ amount: this.state.amount })}
+            {' '}
+            {!this.state.isBuy ? 'ETH' : symbol}
+          </div>
         </div>
+
         {address && (
-        <div className="--bondedToken-submit-container">
-            <button
-              value="submit"
-              className="--bondedToken-submit"
-              onClick={() => this.submit()} >
-              submit
-            </button>
+          <div className="--bondedToken-submit-container">
+            {button}
           </div>
         )}
       </div>

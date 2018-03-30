@@ -15,8 +15,7 @@ const {
 
 class CurveChart extends React.Component {
   static contextTypes = {
-    calculateBuyPrice: PropTypes.func,
-    calculateSaleReturn: PropTypes.func,
+    contractActions: PropTypes.object,
     contractParams: PropTypes.object,
   }
 
@@ -30,7 +29,7 @@ class CurveChart extends React.Component {
   }
 
   getChartData() {
-    let { calculateSaleReturn, calculateBuyPrice } = this.context;
+    let { calculateSaleReturn, calculateBuyPrice } = this.context.contractActions;
     let { totalSupply, reserveRatio, poolBalance } = this.context.contractParams;
     let props = this.context.contractParams;
 

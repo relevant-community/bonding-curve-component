@@ -1,11 +1,12 @@
 const path = require('path');
 
 module.exports = {
+  devtool: 'inline-source-map',
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: 'index.js',
-    libraryTarget: 'commonjs2' // THIS IS THE MOST IMPORTANT LINE! :mindblow: I wasted more than 2 days until realize this was the line most important in all this guide.
+    libraryTarget: 'commonjs'
   },
   module: {
     rules: [
@@ -20,8 +21,15 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['env']
-          }
+            presets: ['env', 'babel-preset-latest'],
+            plugins: [
+              require('babel-plugin-transform-runtime'),
+              require('babel-plugin-transform-es2015-arrow-functions'),
+              require('babel-plugin-transform-object-rest-spread'),
+              require('babel-plugin-transform-class-properties'),
+              require('babel-plugin-transform-react-jsx')
+            ]
+          },
         }
       }
     ]
@@ -35,5 +43,7 @@ module.exports = {
     'web3-utils': 'commonjs web3-utils',
     'react-dom': 'commonjs react-dom',
     'prop-types': 'commonjs prop-types',
+    'eth-price': 'commonjs eth-price',
+
   }
 };

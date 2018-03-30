@@ -1,14 +1,10 @@
 .--bondedToken {
-  font-family: Arial;
-  font-size:16px;
-  line-height:1.2em;
   border: 1px solid black;
 }
 .--bondedToken a,
 .--bondedToken a:active,
 .--bondedToken a:visited,
 .--bondedToken a:hover {
-  color: lightgrey;
   text-decoration: none;
 }
 .--bondedToken .--bondedToken-pointer {
@@ -20,7 +16,13 @@
 }
 .--bondedToken label {
   display: block;
-  border-bottom:1px solid grey;
+  border-bottom: 2px solid grey;
+  /*text-align: right;*/
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: .3rem;
 }
 .--bondedToken label:not(.--bondedToken-ratio) input[type="number"],
 .--bondedToken label:not(.--bondedToken-ratio) > div {
@@ -43,60 +45,58 @@
 .--bondedToken-flex {
   display: flex;
   justify-content: space-between;
+  align-items: flex-end;
 }
 .--bondedToken-flex-center {
   display: flex;
   justify-content: space-evenly;
 }
-/*.--bondedToken-flex > div {
-  flex-grow: 1
-}*/
 
 
 .--bondedToken-mx-auto {
   margin-right:auto;
   margin-left:auto;
 }
-.--bondedToken-eth::after {
-  content: ' Ether';
-  display:inline;
-}
-.--bondedToken-token::after {
-  content: ' Tokens';
-  display:inline;
-}
 
 .--bondedTokenHeader {
   background-color: grey;
-  border-bottom: 1px solid black;
-  color: lightgray;
-  padding:1em;
-  font-size: 0.9em;
-
+  color: white;
+  padding: .5rem 1rem;
 }
+
+.--bondedTokenHeaderBody {
+  padding: .5rem 1rem;
+  box-shadow: 0px .5px grey;
+  font-size: .8rem;
+}
+
 .--bondedTokenAddress {
-  /*font-size: 3.8vw;
-  line-height: 3.8vw; */
-  padding: 0em 0px 1em 0;
+  padding: 0rem 0px 1rem 0;
+  font-size: .7rem;
 }
 
 
-/* --bondedTokenTransact */
+/********** --bondedTokenTransact ***********/
+
 .--bondedTokenTransact {
-  padding:1em;
+  padding: 1rem;
 }
 
+.--bondedToken-not-connected {
+  padding: 1rem;
+  text-align: center;
+}
 
 /* BondedTokenAdvanced */
 .--BondedTokenAdvanced {
   border-top:1px solid black;
-  padding:1em;
+  padding:1rem;
   background-color: lightgrey;
 }
 .--BondedTokenAdvanced-open {
 }
 .--bondedToken-submit-container {
-  padding:1em;
+  padding:1rem;
 }
 .--bondedToken-submit {
   box-sizing: border-box;
@@ -106,7 +106,7 @@
   color: white;
   text-transform: uppercase;
   font-weight: bold;
-  padding:1em;
+  padding:1rem;
   border-radius: 5px;
   transition: transform 100ms ease;
   cursor: pointer;

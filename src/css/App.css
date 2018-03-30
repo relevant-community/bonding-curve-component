@@ -1,6 +1,9 @@
 .App {
   text-align: center;
   font-family: arial;
+  font-size: 16px;
+  line-height: 1.2em;
+  border: 1px solid black;
 }
 a, a:hover, a:visited, a:active {
   color: black;

@@ -5,7 +5,7 @@ var path = require('path');
 
 module.exports = {
   entry: {
-    demo: ['babel-polyfill', './demo/App.js'],
+    demo: './demo/App.js',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -37,7 +37,14 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            // presets: ['env']
+            presets: ['env', 'babel-preset-latest'],
+            plugins: [
+              require('babel-plugin-transform-runtime'),
+              require('babel-plugin-transform-es2015-arrow-functions'),
+              require('babel-plugin-transform-object-rest-spread'),
+              require('babel-plugin-transform-class-properties'),
+              require('babel-plugin-transform-react-jsx')
+            ]
           }
         }
       }

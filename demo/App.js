@@ -1,18 +1,20 @@
 import React, { Component } from 'react';
-import { Drizzle, generateStore, reducer, rootSaga } from 'drizzle';
 import { DrizzleProvider, drizzleConnect } from 'drizzle-react';
 import ReactDOM from 'react-dom';
 
-import { Provider } from 'react-redux'
+import { Provider, connect } from 'react-redux'
 import { createStore } from 'redux'
 
-import BondedToken from '../src/BondedToken';
 import '../src/css/App.css';
 import '../src/css/index.css';
-import Chart from '../src/Chart';
+import './css/BondedToken.css';
+
+import BondedTokenContainer from '../src/BondedTokenContainer';
 import BondedTokenHeader from '../src/BondedTokenHeader';
 import BondedTokenTransact from '../src/BondedTokenTransact';
 import BondedTokenAdvanced from '../src/BondedTokenAdvanced';
+import Chart from '../src/Chart';
+
 import store from './store';
 
 import RelevantCoin from '../src/contracts/RelevantCoin.json';
@@ -52,7 +54,7 @@ class App extends Component {
           margin: '80px auto 80px auto',
         }}>
           <div className="App">
-            <BondedToken>
+            <BondedToken {...this.props}>
               <BondedTokenHeader />
               <BondedTokenTransact />
               <BondedTokenAdvanced>
@@ -66,6 +68,21 @@ class App extends Component {
   }
 }
 
+const mapStateToProps = state => {
+  return {
+    drizzleStatus: state.drizzleStatus,
+    RelevantCoin: state.contracts.RelevantCoin,
+    accounts: state.accounts,
+    accountBalances: state.accountBalances
+  };
+};
+
+// use standard redux connect when using redux store
+const AppComponent = connect(mapStateToProps, {})(App);
+
+// use drizzleConnect for standalone apps
+// export default drizzleConnect(BondedToken, mapStateToProps);
+
 
 ReactDOM.render(
   (<Provider store={store}>
@@ -73,7 +90,7 @@ ReactDOM.render(
       options={options}
       store={store} /* adding state prop tell DrizzleProvider to user existing redux store */
     >
-      <App />
+      <AppComponent />
     </DrizzleProvider>
   </Provider>),
   document.body

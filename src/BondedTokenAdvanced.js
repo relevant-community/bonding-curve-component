@@ -5,9 +5,7 @@ import PropTypes from 'prop-types';
 class BondedTokenAdvanced extends React.Component {
   static contextTypes = {
     contractParams: PropTypes.object,
-    onChange: PropTypes.func,
-    address: PropTypes.string,
-    bigMax: PropTypes.number
+    contractActions: PropTypes.object,
   }
 
   constructor(props) {
@@ -16,6 +14,7 @@ class BondedTokenAdvanced extends React.Component {
       advanced: false,
     };
     this.toggleAdvanced = this.toggleAdvanced.bind(this);
+    this.bigMax = 1000000;
   }
 
   toggleAdvanced() {
@@ -25,8 +24,14 @@ class BondedTokenAdvanced extends React.Component {
   }
 
   render() {
-    let { onChange, address, bigMax } = this.context;
-    let { poolBalance, totalSupply, reserveRatio } = this.context.contractParams;
+    let { onChange } = this.context.contractActions;
+    let {
+      poolBalance,
+      totalSupply,
+      reserveRatio,
+      address
+    } = this.context.contractParams;
+    let { bigMax } = this;
 
     return (
       <div className=" --BondedTokenAdvanced">

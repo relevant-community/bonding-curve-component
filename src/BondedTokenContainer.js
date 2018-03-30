@@ -1,15 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { drizzleConnect } from 'drizzle-react';
-import './css/BondedToken.css';
 import * as contractHelper from './relevantCoinHelper';
-import { connect } from 'react-redux';
 
-const Web3 = require('web3');
+const ethPrice = require('eth-price');
 const utils = require('web3-utils');
 
-class BondedToken extends React.Component {
-  constructor(props, context) {
+class BondedTokenContainer extends React.Component {
+  constructor(props) {
     super(props);
 
     this.onChange = this.onChange.bind(this);
@@ -17,8 +14,9 @@ class BondedToken extends React.Component {
     this.calculatePurchaseReturn = this.calculatePurchaseReturn.bind(this);
     this.calculateBuyPrice = this.calculateBuyPrice.bind(this);
     this.getChildContext = this.getChildContext.bind(this);
+    this.initState = this.initState.bind(this);
+    this.getContractParams = this.getContractParams.bind(this);
 
-    this.bigMax = 1000000;
     this.state = {
       address: '',
       loading: false,
@@ -32,83 +30,135 @@ class BondedToken extends React.Component {
       decimals: 18,
     };
     this.transaction = {};
+    this.ETHUSD = 0;
   }
 
   // you must specify what you’re adding to the context
   static childContextTypes = {
-    walletBalance: PropTypes.number,
-    address: PropTypes.string,
-    account: PropTypes.string,
     contractParams: PropTypes.object,
-    calculatePurchaseReturn: PropTypes.func,
-    calculateBuyPrice: PropTypes.func,
-    calculateSaleReturn: PropTypes.func,
-    bigMax: PropTypes.number,
-    loading: PropTypes.bool,
-    onChange: PropTypes.func,
-    RelevantCoin: PropTypes.object,
-    transaction: PropTypes.object,
-    web3State: PropTypes.object,
+    accountInfo: PropTypes.object,
+    contractActions: PropTypes.object,
+    bondingCurveState: PropTypes.object
   }
 
   getChildContext() {
-    let { tokenBalance, poolBalance, totalSupply, reserveRatio, decimals } = {};
-    if (this.state.address) {
-      ({ tokenBalance, poolBalance, totalSupply, reserveRatio, decimals } =
-        contractHelper.getAll(this.props.RelevantCoin) || this.state);
-    } else {
-      ({ tokenBalance, poolBalance, totalSupply, reserveRatio, decimals } = this.state);
-    }
-    let walletBalance = contractHelper.getAccountBalance(this.props.drizzle, this.state.account) || this.state.walletBalance;
-
-    let contractParams = { tokenBalance, poolBalance, totalSupply, reserveRatio, decimals };
-
     return {
-      walletBalance,
-      contractParams,
-      calculatePurchaseReturn: this.calculatePurchaseReturn,
-      calculateSaleReturn: this.calculateSaleReturn,
-      calculateBuyPrice: this.calculateBuyPrice,
-      bigMax: this.bigMax,
-      loading: this.transaction.status === "pending",
-      address: this.state.address,
-      account: this.state.account,
-      onChange: this.onChange,
-      RelevantCoin: this.props.RelevantCoin,
-      transaction: this.transaction,
-      web3State: this.props.drizzle.web3
+      ...this.contractParams
     };
   }
 
+  getContractParams() {
+    let state = this.props.drizzleStatus.initialized ?
+      contractHelper.getAll(this.props.RelevantCoin) :
+      this.state;
+    let {
+      poolBalance,
+      totalSupply,
+      reserveRatio,
+      decimals,
+      symbol,
+    } = state;
+
+    let walletBalance = contractHelper
+      .getAccountBalance(this.props.accountBalances, this.account) ||
+      this.state.walletBalance;
+
+    let tokenBalance = this.account ?
+      contractHelper.getValue(this.props.RelevantCoin, 'balanceOf', this.account) :
+      0;
+
+    let priceEth = this.calculatePrice(totalSupply, poolBalance, reserveRatio);
+
+    let priceDollar = (priceEth * this.ETHUSD).toFixed(2);
+    priceEth = priceEth.toFixed(2);
+
+    let contractParams = {
+      tokenBalance,
+      poolBalance,
+      totalSupply,
+      reserveRatio,
+      decimals,
+      symbol,
+      RelevantCoin: this.props.RelevantCoin,
+      address: this.state.address,
+      priceEth,
+      priceDollar
+    };
+
+    let accountInfo = {
+      account: this.props.accounts[0],
+      walletBalance
+    };
+
+    let contractActions = {
+      calculatePurchaseReturn: this.calculatePurchaseReturn,
+      calculateSaleReturn: this.calculateSaleReturn,
+      calculateBuyPrice: this.calculateBuyPrice,
+      onChange: this.onChange,
+    };
+
+    let bondingCurveState = {
+      loading: this.transaction.status === 'pending',
+      transaction: this.transaction,
+      web3State: this.props.drizzle.web3,
+      drizzleStatus: this.props.drizzleStatus
+    };
+
+    this.contractParams = {
+      contractParams,
+      contractActions,
+      accountInfo,
+      bondingCurveState
+    };
+  }
+
+  componentWillMount() {
+    this.getContractParams();
+  }
+
+  componentDidMount() {
+    ethPrice('usd')
+      .then(ETHUSD => {
+        ETHUSD = ETHUSD[0].replace('USD: ','');
+        this.ETHUSD = parseFloat(ETHUSD);
+        this.forceUpdate();
+      })
+      .catch(err => console.log(err));
+
+    if (this.props.drizzleStatus.initialized) {
+      this.initState(this.props);
+    }
+  }
+
   componentWillUpdate(nextProps) {
-    let account = nextProps.drizzle.accounts[0];
+    let account = nextProps.accounts[0] || null;
     if (!this.props.drizzleStatus.initialized && nextProps.drizzleStatus.initialized) {
-      let options = {
-        args: { tokenBalance: account }
-      };
-      // console.log(nextProps.drizzle.contracts);
+      this.account = account;
+      // address needs to be in state in case we edit
+      // TODO come up with a better way to toggle this
       this.setState({
-        account,
         address: nextProps.RelevantCoin.address
       });
-      contractHelper.initParams(nextProps.RelevantCoin, options);
+      contractHelper.initParams(nextProps.RelevantCoin);
     }
 
-    // in case we are switching accounts via metamask
-    if (this.props.drizzle.accounts !== nextProps.drizzle.accounts && nextProps.drizzleStatus.initialized) {
-      this.setState({
-        account,
-      });
-      let options = {
-        args: { tokenBalance: account }
-      };
-      contractHelper.initParams(nextProps.RelevantCoin, options);
+    if (nextProps.drizzleStatus.initialized) this.initState(nextProps);
+
+    this.getContractParams();
+  }
+
+  initState(props) {
+    let account = props.accounts[0] || null;
+    if (account !== this.account) this.account = account;
+
+    if (this.state.address !== props.RelevantCoin.address) {
+      this.setState({ address: props.RelevantCoin.address });
     }
 
-    let l = nextProps.drizzle.transactionStack.length;
+    let l = props.drizzle.transactionStack.length;
     if (l) {
-      let recentTransaction = nextProps.drizzle.transactionStack[l-1];
-      let latestStatus = nextProps.drizzle.transactions[recentTransaction].status;
+      let recentTransaction = props.drizzle.transactionStack[l - 1];
+      let latestStatus = props.drizzle.transactions[recentTransaction].status;
       if (latestStatus === 'success') {
         this.transaction = {};
       } else {
@@ -134,17 +184,21 @@ class BondedToken extends React.Component {
     if (type === 'totalSupply') {
       value = Math.max(1000, event.target.value);
     }
-    if (this.transaction.status === "pending") return;
+    if (this.transaction.status === 'pending') return;
     let state = {};
     state[type] = event.target ? value : event;
     this.setState(state);
+  }
+
+  calculatePrice(totalSupply, poolBalance, reserveRatio) {
+    return poolBalance / (totalSupply * reserveRatio);
   }
 
   /* calculateSaleReturn
     Return = _connectorBalance * (1 - (1 - _sellAmount / _supply) ^ (1 / (_connectorWeight / 1000000)))
   */
   calculateSaleReturn(props) {
-    let state = contractHelper.getAll(this.props.RelevantCoin) || this.state;
+    let state = this.contractParams.contractParams || this.state;
 
     let { totalSupply, poolBalance, reserveRatio, amount } = { ...state, ...props };
     if (!totalSupply || !poolBalance || !reserveRatio || !amount) return '0';
@@ -159,7 +213,7 @@ class BondedToken extends React.Component {
   }
 
   calculateBuyPrice(props) {
-    let state = contractHelper.getAll(this.props.RelevantCoin) || this.state;
+    let state = this.contractParams.contractParams || this.state;
     let { totalSupply, poolBalance, reserveRatio, amount } = { ...state, ...props };
     if (!totalSupply || !poolBalance || !reserveRatio || !amount) return '0';
     if (totalSupply === 0 || reserveRatio === 0 || poolBalance === 0 || amount === 0) return '0';
@@ -170,7 +224,7 @@ class BondedToken extends React.Component {
   // calculatePurchaseReturn
   // Return = _supply * ((1 + _depositAmount / _connectorBalance) ^ (_connectorWeight / 1000000) - 1)
   calculatePurchaseReturn(props) {
-    let state = contractHelper.getAll(this.props.RelevantCoin) || this.state;
+    let state = this.contractParams.contractParams || this.state;
     let { totalSupply, poolBalance, reserveRatio, amount } = { ...state, ...props };
     if (!totalSupply || !poolBalance || !reserveRatio || !amount) return '0';
     // special case if the weight = 100%
@@ -184,25 +238,17 @@ class BondedToken extends React.Component {
   }
 
   render() {
-    console.log(this.props);
+    let color = this.props.themeColor || 'grey';
     return (
-      <div className="--bondedToken">
+      <div
+        className={'--bondedToken'}
+        style={{ borderColor: color }}
+      >
         {this.props.children}
       </div>
     );
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    drizzleStatus: state.drizzleStatus,
-    RelevantCoin: state.contracts.RelevantCoin,
-    drizzle: state,
-  };
-};
+export default BondedTokenContainer;
 
-// use standard redux connect when using redux store
-export default connect(mapStateToProps, {})(BondedToken);
-
-// use drizzleConnect for standalone apps
-// export default drizzleConnect(BondedToken, mapStateToProps);
