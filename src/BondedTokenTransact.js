@@ -3,6 +3,7 @@ import Switch from 'react-flexible-switch';
 import PropTypes from 'prop-types';
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
+import { getNetwork } from './relevantCoinHelper';
 
 class BondedTokenTransact extends React.Component {
   static contextTypes = {
@@ -70,9 +71,11 @@ class BondedTokenTransact extends React.Component {
       calculatePurchaseReturn,
       calculateSaleReturn
     } = this.context.contractActions;
-    let { drizzleStatus, loading } = this.context.bondingCurveState;
+    let { loading, web3State } = this.context.bondingCurveState;
     let { walletBalance, account } = this.context.accountInfo;
     let { tokenBalance, symbol, address, priceEth, priceDollar } = this.context.contractParams;
+
+    let metamaskNetwork = getNetwork(web3State);
 
     let color = this.props.accentColor || 'blue';
     let { bigMax } = this;
@@ -102,7 +105,9 @@ class BondedTokenTransact extends React.Component {
     //   );
     // }
 
-    if (!account) {
+    let desiredNetwork = this.props.network ? this.props.network.toLowerCase() : metamaskNetwork;
+
+    if (!account || desiredNetwork !== metamaskNetwork) {
       let network = this.props.network || 'main';
       let getTokens = (
         <p>

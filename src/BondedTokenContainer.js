@@ -47,9 +47,9 @@ class BondedTokenContainer extends React.Component {
     };
   }
 
-  getContractParams() {
-    let state = this.props.drizzleStatus.initialized ?
-      contractHelper.getAll(this.props.RelevantCoin) :
+  getContractParams(props, nextState) {
+    let state = props.drizzleStatus.initialized ?
+      contractHelper.getAll(props.RelevantCoin) :
       this.state;
     let {
       poolBalance,
@@ -60,11 +60,11 @@ class BondedTokenContainer extends React.Component {
     } = state;
 
     let walletBalance = contractHelper
-      .getAccountBalance(this.props.accountBalances, this.account) ||
+      .getAccountBalance(props.accountBalances, this.account) ||
       this.state.walletBalance;
 
     let tokenBalance = this.account ?
-      contractHelper.getValue(this.props.RelevantCoin, 'balanceOf', this.account) :
+      contractHelper.getValue(props.RelevantCoin, 'balanceOf', this.account) :
       0;
 
     let priceEth = this.calculatePrice(totalSupply, poolBalance, reserveRatio);
@@ -79,14 +79,14 @@ class BondedTokenContainer extends React.Component {
       reserveRatio,
       decimals,
       symbol,
-      RelevantCoin: this.props.RelevantCoin,
-      address: this.state.address,
+      RelevantCoin: props.RelevantCoin,
+      address: nextState.address,
       priceEth,
       priceDollar
     };
 
     let accountInfo = {
-      account: this.props.accounts[0],
+      account: props.accounts[0],
       walletBalance
     };
 
@@ -100,8 +100,8 @@ class BondedTokenContainer extends React.Component {
     let bondingCurveState = {
       loading: this.transaction.status === 'pending',
       transaction: this.transaction,
-      web3State: this.props.drizzle.web3,
-      drizzleStatus: this.props.drizzleStatus
+      web3State: props.drizzle.web3,
+      drizzleStatus: props.drizzleStatus
     };
 
     this.contractParams = {
@@ -113,7 +113,7 @@ class BondedTokenContainer extends React.Component {
   }
 
   componentWillMount() {
-    this.getContractParams();
+    this.getContractParams(this.props, this.state);
   }
 
   componentDidMount() {
@@ -130,7 +130,7 @@ class BondedTokenContainer extends React.Component {
     }
   }
 
-  componentWillUpdate(nextProps) {
+  componentWillUpdate(nextProps, nextState) {
     let account = nextProps.accounts[0] || null;
     if (!this.props.drizzleStatus.initialized && nextProps.drizzleStatus.initialized) {
       this.account = account;
@@ -144,7 +144,7 @@ class BondedTokenContainer extends React.Component {
 
     if (nextProps.drizzleStatus.initialized) this.initState(nextProps);
 
-    this.getContractParams();
+    this.getContractParams(nextProps, nextState);
   }
 
   initState(props) {

@@ -37,7 +37,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['env', 'babel-preset-latest'],
+            presets: ['env'],
             plugins: [
               require('babel-plugin-transform-runtime'),
               require('babel-plugin-transform-es2015-arrow-functions'),

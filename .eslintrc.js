@@ -1,9 +1,9 @@
 module.exports = {
   "extends": "airbnb-base",
   "plugins": [
-      "import",
-      "react",
-      "class-property"
+    "import",
+    "react",
+    "class-property"
   ],
   "parser": "babel-eslint",
   "parserOptions": {

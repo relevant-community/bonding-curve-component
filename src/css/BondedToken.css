@@ -24,12 +24,12 @@
   align-items: flex-end;
   padding-bottom: .3rem;
 }
-.--bondedToken label:not(.--bondedToken-ratio) input[type="number"],
+/*.--bondedToken label:not(.--bondedToken-ratio) input[type="number"],
 .--bondedToken label:not(.--bondedToken-ratio) > div {
   width:calc(100% - 60px);
   max-width: calc(50vw - 2em);
   display: inline;
-}
+}*/
 .--bondedToken input[type="range"] {
   width:100%;
 }
