@@ -10,16 +10,27 @@
 .--bondedToken .--bondedToken-pointer {
   cursor: pointer;
 }
+.--bondedToken-available {
+  font-size: .7rem;
+  padding-top: 3px;
+  /*display: flex;*/
+  text-align: center;
+  margin-bottom: -15px;
+  /*justify-content: space-between;*/
+  a {
+    text-align: right;
+  }
+}
 .--bondedToken input:focus,
 .--bondedToken button:focus{
     outline: none;
 }
 .--bondedToken label {
   display: block;
-  border-bottom: 2px solid grey;
-  /*text-align: right;*/
+  border-bottom: 1px solid grey;
+  text-align: right;
   display: flex;
-  width: 100%;
+  flex: 1;
   justify-content: space-between;
   align-items: flex-end;
   padding-bottom: .3rem;
@@ -33,14 +44,26 @@
 .--bondedToken input[type="range"] {
   width:100%;
 }
+
+.--bondedToken input[type=number]::-webkit-inner-spin-button,
+.--bondedToken input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .--bondedToken input[type="text"],
 .--bondedToken input[type="number"] {
   display: inline;
   border: none;
   text-align:right;
   font-size: 1rem;
-  width:100%;
+  flex: 1;
+  padding-right: 5px;
   background-color: transparent;
+  line-height: inherit;
+  &::after {
+    display: none;
+  }
 }
 .--bondedToken-flex {
   display: flex;
@@ -66,7 +89,7 @@
 
 .--bondedTokenHeaderBody {
   padding: .5rem 1rem;
-  box-shadow: 0px .5px grey;
+  /*box-shadow: 0px .5px grey;*/
   font-size: .8rem;
 }
 

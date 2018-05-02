@@ -46,7 +46,7 @@
     "babel-register": "^6.26.0",
     "clean-webpack-plugin": "^0.1.18",
     "css-loader": "^0.28.9",
-    "drizzle": "git+https://github.com/james1465/drizzle.git",
+    "drizzle": "git+https://github.com/relevant-community/drizzle.git",
     "drizzle-react": "^1.0.1",
     "eslint": "^4.19.0",
     "eslint-config-airbnb-base": "^12.1.0",

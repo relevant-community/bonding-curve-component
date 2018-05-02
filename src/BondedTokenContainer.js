@@ -21,7 +21,6 @@ class BondedTokenContainer extends React.Component {
       address: '',
       loading: false,
       account: null,
-
       walletBalance: 0,
       tokenBalance: 0,
       poolBalance: 4000000,
@@ -55,8 +54,6 @@ class BondedTokenContainer extends React.Component {
       poolBalance,
       totalSupply,
       reserveRatio,
-      decimals,
-      symbol,
     } = state;
 
     let walletBalance = contractHelper
@@ -73,12 +70,8 @@ class BondedTokenContainer extends React.Component {
     priceEth = priceEth.toFixed(2);
 
     let contractParams = {
+      ...state,
       tokenBalance,
-      poolBalance,
-      totalSupply,
-      reserveRatio,
-      decimals,
-      symbol,
       RelevantCoin: props.RelevantCoin,
       address: nextState.address,
       priceEth,

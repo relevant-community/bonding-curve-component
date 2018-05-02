@@ -27,6 +27,12 @@ class BondedTokenHeader extends React.Component {
         </div>
         <div className="--bondedTokenHeaderBody">
           <div className="--bondedTokenAddress">
+            address: <a
+            target="_blank"
+            href={`https://${network}etherscan.io/address/${account}`}
+            >
+              {account}
+            </a>
             {transaction.status && transaction.status === 'pending' ? (
               <div
                 style={{
@@ -45,14 +51,8 @@ class BondedTokenHeader extends React.Component {
                 </a>
               </div>
             ) : null}
-            address: <a
-            target="_blank"
-            href={`https://${network}etherscan.io/address/${account}`}
-            >
-              {account}
-            </a>
           </div>
-          <div className="--bondedToken-flex">
+{/*          <div className="--bondedToken-flex">
             <div
               className="--bondedToken-pointer"
             >
@@ -63,7 +63,7 @@ class BondedTokenHeader extends React.Component {
             >
               {tokenBalance ? tokenBalance.toFixed(2) : tokenBalance} {symbol}
             </div>
-          </div>
+          </div>*/}
         </div>
       </div>
     );

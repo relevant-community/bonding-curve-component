@@ -12,6 +12,10 @@ export const params = {
   poolBalance: defaultConvert,
   reserveRatio: { convert: true, decimals: 6 },
   inflationSupply: defaultConvert,
+  rewardPool: defaultConvert,
+  distributedRewards: defaultConvert,
+  virtualSupply: defaultConvert,
+  virtualBalance: defaultConvert,
   symbol: { convert: false },
 };
 
