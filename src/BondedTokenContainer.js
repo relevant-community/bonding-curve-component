@@ -67,7 +67,7 @@ class BondedTokenContainer extends React.Component {
     let priceEth = this.calculatePrice(totalSupply, poolBalance, reserveRatio);
 
     let priceDollar = (priceEth * this.ETHUSD).toFixed(2);
-    priceEth = priceEth.toFixed(2);
+    priceEth = priceEth.toFixed(6);
 
     let contractParams = {
       ...state,

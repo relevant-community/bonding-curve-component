@@ -2,14 +2,15 @@ import React, { Component } from 'react';
 import { DrizzleProvider, drizzleConnect } from 'drizzle-react';
 import ReactDOM from 'react-dom';
 
-import { Provider, connect } from 'react-redux'
-import { createStore } from 'redux'
+import { Provider, connect } from 'react-redux';
+import { createStore } from 'redux';
 
 import '../src/css/App.css';
 import '../src/css/index.css';
 import '../src/css/BondedToken.css';
 
 import {
+  BondedTokenBalance,
   BondedTokenContainer,
   BondedTokenHeader,
   BondedTokenTransact,
@@ -58,6 +59,7 @@ class App extends Component {
           <div className="App">
             <BondedTokenContainer {...this.props}>
               <BondedTokenHeader />
+              <BondedTokenBalance />
               <BondedTokenTransact />
               <BondedTokenAdvanced>
                 <Chart />
@@ -85,8 +87,6 @@ const AppComponent = connect(mapStateToProps, {})(App);
 
 // use drizzleConnect for standalone apps
 // export default drizzleConnect(BondedToken, mapStateToProps);
-
-
 ReactDOM.render(
   (<Provider store={store}>
     <DrizzleProvider

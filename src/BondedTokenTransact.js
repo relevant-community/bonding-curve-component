@@ -53,13 +53,13 @@ class BondedTokenTransact extends React.Component {
     // this.setState({ loading: 'Please Review & Sign Transaction' });
 
     if (this.state.isBuy) {
-      let amount = Web3.utils.toWei(this.state.amount);
-      amount = new BigNumber(amount, 10).toString(10);
+      let amount = Web3.utils.toWei(this.state.amount.toString());
+      amount = new BigNumber(amount.toString());
       RelevantCoin.methods.buy.cacheSend({
         value: amount, from: account
       });
     } else {
-      let amount = new BigNumber(this.state.amount).times(10 ** decimals);
+      let amount = new BigNumber(this.state.amount.toString()).times(10 ** decimals);
       RelevantCoin.methods.sell.cacheSend(amount, {
         from: account
       });
