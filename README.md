@@ -4,21 +4,9 @@ Built on the occasion of ETHDenver Hackathon by Billy Rennekamp and Slava Balasa
 ## Install
 ```npm install bonded-token --save```
 
+## Dependencies
+drizzle
+
 ## Use
-```
+See /demo/App.js for usage example
 
-import BondedToken from 'bonded-token'
-
-class App extends Component {
-  render() {
-    let contractAddress = '0xN07AR34LC0N7R4C74DDR355D0N0TU5E7H15H3110M0M' // optional
-    return (<div>
-      <BondedToken address={contractAddress} />
-    </div>)
-  }
-}
-
-export default App;
-```
-
-```src/dapp-module/RelevantCoint/index.js``` should be generated with https://github.com/okwme/dapp-scratch  
