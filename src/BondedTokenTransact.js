@@ -1,17 +1,13 @@
 import React from 'react';
 import Switch from 'react-flexible-switch';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import BigNumber from 'bignumber.js';
 import Web3 from 'web3';
-import { getNetwork } from './relevantCoinHelper';
+import { getNetwork, toFixed } from './utils';
+import BondingCurveContext from './BondingCurveContext';
 
 class BondedTokenTransact extends React.Component {
-  static contextTypes = {
-    contractParams: PropTypes.object,
-    accountInfo: PropTypes.object,
-    contractActions: PropTypes.object,
-    bondingCurveState: PropTypes.object
-  }
+  static contextType = BondingCurveContext
 
   constructor(props) {
     super(props);
@@ -23,12 +19,11 @@ class BondedTokenTransact extends React.Component {
 
     this.toggleBuy = this.toggleBuy.bind(this);
     this.submit = this.submit.bind(this);
-
-    this.bigMax = 1000000;
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
-    if (this.context.bondingCurveState.loading && !nextContext.bondingCurveState.loading) {
+    if (!this.context.contractParams) return;
+    if (this.context.contractParams.loading && !nextContext.contractParams.loading) {
       this.setState({
         amount: '',
       });
@@ -36,7 +31,7 @@ class BondedTokenTransact extends React.Component {
   }
 
   toggleBuy() {
-    let { loading } = this.context.bondingCurveState;
+    let { loading } = this.context.contractParams;
     if (loading) return;
     this.setState({
       amount: '',
@@ -45,40 +40,48 @@ class BondedTokenTransact extends React.Component {
   }
 
   submit() {
-    let { loading } = this.context.bondingCurveState;
-    let { account } = this.context.accountInfo;
-    let { decimals, RelevantCoin } = this.context.contractParams;
+    let { decimals, contract, account, loading } = this.context.contractParams;
     if (this.state.amount <= 0 || loading) return;
-
-    // this.setState({ loading: 'Please Review & Sign Transaction' });
 
     if (this.state.isBuy) {
       let amount = Web3.utils.toWei(this.state.amount.toString());
       amount = new BigNumber(amount.toString());
-      RelevantCoin.methods.buy.cacheSend({
+      contract.methods.buy.cacheSend({
         value: amount, from: account
       });
     } else {
       let amount = new BigNumber(this.state.amount.toString()).times(10 ** decimals);
-      RelevantCoin.methods.sell.cacheSend(amount, {
+      contract.methods.sell.cacheSend(amount, {
         from: account
       });
     }
   }
 
   render() {
+    if (!this.context.contractParams) return null;
+
     let {
       calculatePurchaseReturn,
       calculateSaleReturn
     } = this.context.contractActions;
-    let { loading, web3State } = this.context.bondingCurveState;
-    let { walletBalance, account } = this.context.accountInfo;
-    let { tokenBalance, symbol, address, priceEth, priceDollar } = this.context.contractParams;
+
+    let {
+      walletBalance,
+      account,
+      tokenBalance,
+      symbol,
+      address,
+      priceEth,
+      priceDollar,
+      web3State,
+      bigMax,
+      loading
+    } = this.context.contractParams;
+
 
     let metamaskNetwork = getNetwork(web3State);
 
     let color = this.props.accentColor || 'blue';
-    let { bigMax } = this;
 
     let button = (
       <button
@@ -99,13 +102,6 @@ class BondedTokenTransact extends React.Component {
       );
     }
 
-    // if (!drizzleStatus.initialized) {
-    //   return (
-    //     <p>
-    //       Connecting to Metamask...
-    //     </p>
-    //   );
-    // }
 
     let desiredNetwork = this.props.network ? this.props.network.toLowerCase() : metamaskNetwork;
 
@@ -135,12 +131,12 @@ class BondedTokenTransact extends React.Component {
     let action = 'Pay With';
     let available = <a
       onClick={() => this.setState({ amount: walletBalance })} >
-        Available: {walletBalance.toFixed(2)} ETH</a>;
+        Available: {toFixed(walletBalance, 2)} ETH</a>;
     let placeholder = 'Enter amount... ';
     if (!this.state.isBuy) {
       // placeholder = 'Enter the amount of RNT you want to sell';
       available = <a onClick={() => this.setState({ amount: tokenBalance })}>
-        Available: {tokenBalance.toFixed(2)} {symbol}
+        Available: {toFixed(tokenBalance, 2)} {symbol}
       </a>;
       action = 'Sell';
     }
@@ -150,13 +146,10 @@ class BondedTokenTransact extends React.Component {
         <div className="--bondedToken-flex --bondedTokenTransact">
           <Switch
             switchStyles={{
-              // fontWeight: 'bold',
               width: 100,
               color,
               background: 'transparent',
-              // borderRadius: 0,
               fontSize: '18px',
-              // border: '2px solid ' + color.
               borderColor: color
             }}
             value={this.state.isBuy}
@@ -165,7 +158,6 @@ class BondedTokenTransact extends React.Component {
               onColor: color,
               offColor: color,
               color,
-              // borderRadius: 0
             }}
             labels={{ on: 'Buy', off: 'Sell' }}
             onChange={() => this.toggleBuy()}
@@ -185,8 +177,8 @@ class BondedTokenTransact extends React.Component {
               }}
               type="text"
               max={this.state.isBuy ?
-                (address ? walletBalance.toFixed(4) : bigMax)
-                : tokenBalance.toFixed(4)}
+                (address ? toFixed(walletBalance, 4) : bigMax)
+                : toFixed(tokenBalance, 4)}
               value={this.state.amount}
               onChange={event => {
                 if (loading) return;

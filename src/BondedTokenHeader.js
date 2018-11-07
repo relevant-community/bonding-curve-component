@@ -1,18 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as relevantCoinHelper from './relevantCoinHelper';
+import BondingCurveContext from './BondingCurveContext';
 
 class BondedTokenHeader extends React.Component {
-  static contextTypes = {
-    accountInfo: PropTypes.object,
-    contractParams: PropTypes.object,
-    bondingCurveState: PropTypes.object
-  }
+  static contextType = BondingCurveContext
 
   render() {
-    let { walletBalance, account } = this.context.accountInfo;
-    let { transaction, web3State } = this.context.bondingCurveState;
-    let { tokenBalance, symbol } = this.context.contractParams;
+    let {
+      account,
+      transaction,
+      web3State
+    } = this.context.contractParams;
     let network = relevantCoinHelper.getNetwork(web3State);
     network = network === 'main' ? '' : network + '.';
     let { props } = this;
@@ -36,7 +35,6 @@ class BondedTokenHeader extends React.Component {
             {transaction.status && transaction.status === 'pending' ? (
               <div
                 style={{
-                  // maxWidth: '75%',
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
@@ -52,18 +50,6 @@ class BondedTokenHeader extends React.Component {
               </div>
             ) : null}
           </div>
-{/*          <div className="--bondedToken-flex">
-            <div
-              className="--bondedToken-pointer"
-            >
-              {walletBalance.toFixed(2)} ETH
-            </div>
-            <div
-              className="--bondedToken-pointer"
-            >
-              {tokenBalance ? tokenBalance.toFixed(2) : tokenBalance} {symbol}
-            </div>
-          </div>*/}
         </div>
       </div>
     );

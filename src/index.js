@@ -5,6 +5,8 @@ import BondedTokenAdvanced from '../src/BondedTokenAdvanced';
 import BondedTokenBalance from '../src/BondedTokenBalance';
 import Chart from '../src/Chart';
 import * as BondedTokenUtils from '../src/relevantCoinHelper';
+import BondingCurveContext from '../src/BondingCurveContext';
+
 
 export {
   BondedTokenContainer,
@@ -13,5 +15,6 @@ export {
   BondedTokenAdvanced,
   Chart,
   BondedTokenUtils,
-  BondedTokenBalance
-}
+  BondedTokenBalance,
+  BondingCurveContext
+};

@@ -48,9 +48,9 @@ export function getValue(contract, method, args) {
   if (!contract || !contract.initialized) return null;
   let result;
   if (args) {
-    result = contract.methods[method].cacheCall(args);
+    result = contract.methods[method] ? contract.methods[method].cacheCall(args) : null;
   } else {
-    result = contract.methods[method].cacheCall();
+    result = contract.methods[method] ? contract.methods[method].cacheCall() : null;
   }
   return formatParam(contract, result, method);
 }

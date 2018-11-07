@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { DrizzleProvider, drizzleConnect } from 'drizzle-react';
 import ReactDOM from 'react-dom';
-
 import { Provider, connect } from 'react-redux';
 import { createStore } from 'redux';
 
@@ -22,6 +21,8 @@ import store from './store';
 
 import RelevantCoin from '../src/contracts/RelevantCoin.json';
 
+const networkId = 4;
+
 let options = {
   contracts: [
     RelevantCoin
@@ -31,13 +32,16 @@ let options = {
     blocks: 300,
     accounts: 300,
   },
+  networkId,
   web3: {
-    // ignoreMetamask: true,
+    ignoreMetamask: true,
     useMetamask: true,
-    block: false,
-    fallback: {
-      type: 'ws',
-      url: 'wss://rinkeby.infura.io/_ws'
+    fallback: window.web3 ? null : {
+      type: 'https',
+      url: 'https://rinkeby.infura.io/' + 'eAeL7I8caPNjDe66XRTq',
+      // type: 'ws',
+      // url: 'ws://rinkeby.infura.io/_ws',
+      networkId: 4,
     }
   }
 };
@@ -72,15 +76,15 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    drizzleStatus: state.drizzleStatus,
-    RelevantCoin: state.contracts.RelevantCoin,
-    accounts: state.accounts,
-    accountBalances: state.accountBalances,
-    drizzle: state,
-  };
-};
+const mapStateToProps = state => ({
+  drizzleStatus: state.drizzleStatus,
+  contract: state.contracts.RelevantCoin,
+  accounts: state.accounts,
+  accountBalances: state.accountBalances,
+  drizzle: state,
+  contracts: state.contracts,
+});
+
 
 // use standard redux connect when using redux store
 const AppComponent = connect(mapStateToProps, {})(App);

@@ -1,21 +1,44 @@
 import React from 'react';
 import Switch from 'react-flexible-switch';
 import PropTypes from 'prop-types';
+import BondingCurveContext from './BondingCurveContext';
+import { toFixed } from './utils';
 
 class BondedTokenAdvanced extends React.Component {
-  static contextTypes = {
-    contractParams: PropTypes.object,
-    contractActions: PropTypes.object,
+  static contextType = BondingCurveContext;
+
+  static propTypes = {
+    totalSupply: PropTypes.number,
+    reserveRatio: PropTypes.number,
+    poolBalance: PropTypes.number,
+    onChange: PropTypes.func,
+    address: PropTypes.string,
+    children: PropTypes.element
   }
 
-  constructor(props) {
+  constructor(props, context) {
     super(props);
     this.state = {
       advanced: false,
+      custom: false,
+      tokenBalance: 0,
+      poolBalance: 4000000,
+      totalSupply: 1000000,
+      reserveRatio: 0.2,
+      bigMax: context.contractParams.bigMax
     };
     this.toggleAdvanced = this.toggleAdvanced.bind(this);
-    this.bigMax = 1000000;
+    this.onChange = this.onChange.bind(this);
   }
+
+  onChange(event, type) {
+    let { setCustomCurve } = this.context.contractActions;
+    let value = event.target ? event.target.value : null;
+    value = parseFloat(value, 10);
+    this.setState({ [type]: value });
+    setCustomCurve({ ...this.state, [type]: value });
+  }
+
 
   toggleAdvanced() {
     this.setState({
@@ -24,27 +47,44 @@ class BondedTokenAdvanced extends React.Component {
   }
 
   render() {
+    let { custom } = this.state;
+
     let { onChange } = this.context.contractActions;
     let {
       poolBalance,
       totalSupply,
       reserveRatio,
-      address
-    } = this.context.contractParams;
-    let { bigMax } = this;
+      address,
+      bigMax,
+      contract
+    } = custom ? this.state : this.context.contractParams;
+
+    if (!custom && !contract) return null;
+    let color = this.props.accentColor || 'blue';
 
     return (
       <div className=" --BondedTokenAdvanced">
         <div className=" --bondedToken-flex-center">
           <Switch
-          switchStyles={{ width: 110, color: 'grey' }}
+          switchStyles={{ width: 110, color }}
           value={this.state.advanced}
-          circleStyles={{ diameter: 16, onColor: 'grey', offColor: 'lightgrey' }}
+          circleStyles={{ diameter: 16, onColor: color, offColor: 'lightgrey' }}
           labels={{ on: 'Advanced', off: 'Advanced' }}
           onChange={this.toggleAdvanced} />
         </div>
         {this.state.advanced && (
         <div className=" --BondedTokenAdvanced-open">
+
+        <Switch
+          switchStyles={{ width: 110, color }}
+          value={custom}
+          circleStyles={{ diameter: 16, onColor: color, offColor: 'lightgrey' }}
+          labels={{ on: 'Custom', off: 'Custom' }}
+          onChange={() => {
+            this.setState({ custom: !custom });
+            this.context.contractActions.setCustomCurve({ ...this.state, custom: !custom });
+          }}
+        />
 
           <div className="--bondedToken-flex --bondedTokenTransact">
             <div>Token Address</div>
@@ -53,6 +93,7 @@ class BondedTokenAdvanced extends React.Component {
                 <input
                   type="text"
                   value={address}
+                  name={'address'}
                   onChange={event => onChange(event, 'address')} />
               </label>
             </div>
@@ -63,18 +104,20 @@ class BondedTokenAdvanced extends React.Component {
             <div>
               <label className="--bondedToken-eth">
                 <input
-                  readOnly={!!address}
+                  readOnly={!custom}
                   type="number"
-                  value={poolBalance.toFixed(2)}
+                  value={toFixed(poolBalance, 2)}
                   max={bigMax}
-                  onChange={event => onChange(event, 'poolBalance')} />
+                  name={'poolBalance'}
+                  onChange={event => this.onChange(event, 'poolBalance')} />
               </label>
-              {!address && (
+              {custom && (
               <input
                 type="range"
-                value={poolBalance.toFixed(2)}
+                value={toFixed(poolBalance, 2)}
                 max={bigMax}
-                onChange={event => onChange(event, 'poolBalance')} />)}
+                name={'poolBalance'}
+                onChange={event => this.onChange(event, 'poolBalance')} />)}
             </div>
           </div>
 
@@ -83,21 +126,23 @@ class BondedTokenAdvanced extends React.Component {
             <div>
               <label className="--bondedToken-ratio">
                 <input
-                  readOnly={!!address}
+                  readOnly={!custom}
                   type="number"
                   step="0.01"
                   max="1"
                   min="0"
-                  value={reserveRatio.toFixed(2)}
-                  onChange={event => onChange(event, 'reserveRatio')} />
+                  value={toFixed(reserveRatio, 2)}
+                  name={'reserveRatio'}
+                  onChange={event => this.onChange(event, 'reserveRatio')} />
               </label>
-              {!address && (
+              {custom && (
               <input
                 type="range"
-                value={reserveRatio.toFixed(2)}
+                value={toFixed(reserveRatio, 2)}
                 max="1"
                 step="0.01"
-                onChange={event => onChange(event, 'reserveRatio')} />)}
+                name={'reserveRatio'}
+                onChange={event => this.onChange(event, 'reserveRatio')} />)}
             </div>
           </div>
 
@@ -106,18 +151,20 @@ class BondedTokenAdvanced extends React.Component {
             <div>
               <label className="--bondedToken-token">
                  <input
-                    readOnly={!!address}
+                    readOnly={!custom}
                     type="number"
-                    value={totalSupply.toFixed(2)}
+                    value={toFixed(totalSupply, 2)}
                     max={bigMax}
-                    onChange={event => onChange(event, 'totalSupply')} />
+                    name={'totalSupply'}
+                    onChange={event => this.onChange(event, 'totalSupply')} />
               </label>
-              {!address && (
+              {custom && (
               <input
                 type="range"
-                value={totalSupply.toFixed(2)}
+                value={toFixed(totalSupply, 2)}
                 max={bigMax}
-                onChange={event => onChange(event, 'totalSupply')} />)}
+                name={'totalSupply'}
+                onChange={event => this.onChange(event, 'totalSupply')} />)}
             </div>
           </div>
           {this.props.children}
@@ -127,15 +174,5 @@ class BondedTokenAdvanced extends React.Component {
     );
   }
 }
-
-BondedTokenAdvanced.propTypes = {
-  totalSupply: PropTypes.number,
-  reserveRatio: PropTypes.number,
-  poolBalance: PropTypes.number,
-  bigMax: PropTypes.number,
-  onChange: PropTypes.func,
-  address: PropTypes.string,
-  children: PropTypes.element
-};
 
 export default BondedTokenAdvanced;

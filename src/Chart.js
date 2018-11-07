@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import BondingCurveContext from './BondingCurveContext';
 
 const Recharts = require('recharts');
 
@@ -14,10 +14,7 @@ const {
 } = Recharts;
 
 class CurveChart extends React.Component {
-  static contextTypes = {
-    contractActions: PropTypes.object,
-    contractParams: PropTypes.object,
-  }
+  static contextType = BondingCurveContext
 
   constructor(props) {
     super(props);
@@ -30,15 +27,22 @@ class CurveChart extends React.Component {
 
   getChartData() {
     let { calculateSaleReturn, calculateBuyPrice } = this.context.contractActions;
-    let { totalSupply, reserveRatio, poolBalance } = this.context.contractParams;
     let props = this.context.contractParams;
+    let { custom } = props.customCurve;
+    let { bigMax } = props;
+    if (custom) {
+      props = props.customCurve;
+    }
+
+    let { totalSupply, reserveRatio, poolBalance } = props;
+    if (bigMax > totalSupply * 1.5 && !custom) bigMax = totalSupply * 1.5;
 
     let data = [];
-    let step = Math.round(totalSupply / 100);
+    let step = Math.round(bigMax / 100);
     let price = poolBalance / (reserveRatio * totalSupply);
     let currentPrice = { supply: totalSupply, value: price };
 
-    for (let i = step; i < totalSupply * 1.5; i += step) {
+    for (let i = step; i < bigMax; i += step) {
       if (i < totalSupply) {
         let eth = 1 * calculateSaleReturn({ ...props, amount: totalSupply - i });
         price = (parseFloat(poolBalance, 10) - eth) / (reserveRatio * i);
@@ -49,6 +53,7 @@ class CurveChart extends React.Component {
         data.push({ supply: 1 * i, buy: price, value: 1 * price });
       }
     }
+    console.log(data);
     return { data, currentPrice };
   }
 
@@ -78,7 +83,6 @@ class CurveChart extends React.Component {
 
           <ReferenceDot
             isFront={true}
-            alwaysShow={true}
             x={currentPrice.supply}
             y={currentPrice.value}
             r={8}
