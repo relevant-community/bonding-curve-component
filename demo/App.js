@@ -29,7 +29,7 @@ let options = {
   ],
   events: {},
   polls: {
-    blocks: 300,
+    blocks: 100,
     accounts: 300,
   },
   networkId,

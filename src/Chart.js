@@ -53,7 +53,6 @@ class CurveChart extends React.Component {
         data.push({ supply: 1 * i, buy: price, value: 1 * price });
       }
     }
-    console.log(data);
     return { data, currentPrice };
   }
 
